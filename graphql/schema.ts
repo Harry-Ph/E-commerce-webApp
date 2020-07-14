@@ -51,12 +51,7 @@ schema.mutationType({
   },
 });
 
-update() trong prisma: user
 
-update() se su dung update() cua prisma
-update() {
-  return update()
-}
 
 // schema.queryType({
 //   definition(t) {

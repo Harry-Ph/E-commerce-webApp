@@ -11,6 +11,7 @@ type Props = {
 }
 
 const StaticPropsDetail = ({ item, errors }: Props) => {
+  console.log(2222)
   if (errors) {
     return (
       <Layout title="Error | Next.js + TypeScript Example">
@@ -50,6 +51,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 // direct database queries.
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   try {
+    console.log(111)
     const id = params?.id
     const item = sampleUserData.find((data) => data.id === Number(id))
     // By returning { props: item }, the StaticPropsDetail component
