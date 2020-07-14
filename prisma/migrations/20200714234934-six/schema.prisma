@@ -1,6 +1,6 @@
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 generator client {
@@ -12,7 +12,7 @@ model Ppl {
   name String
 }
 
-model Product {
+model Product1 {
   id   String @default(cuid()) @id
   name String
 }

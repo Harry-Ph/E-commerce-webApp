@@ -12,7 +12,7 @@ schema.objectType({
 });
 
 schema.objectType({
-  name: "Book",
+  name: "Product",
   definition(t) {
     t.model.id();
     t.model.name();
@@ -30,6 +30,18 @@ schema.queryType({
 
     t.crud.ppl();
     t.crud.ppls();
+
+    t.list.field("allProducts", {
+      type: "Product",
+      resolve(_parent, _args, ctx) {
+        console.log(ctx.db)
+        // @ts-ignore
+        return ctx.db.product!.findMany({});
+      },
+    });
+
+    t.crud.product();
+    t.crud.products();
   },
 });
 
@@ -48,25 +60,24 @@ schema.mutationType({
     t.crud.deleteManyPpl();
     t.crud.updateOnePpl();
     t.crud.updateManyPpl();
+
+    t.field("productMutation", {
+      type: "String",
+      async resolve(_parent, _args, ctx) {
+        // @ts-ignore
+        const { count } = await ctx.db.product!.deleteMany({});
+        return `${count} user(s) destroyed. Thanos will be proud.`;
+      },
+    });
+
+    t.crud.createOneProduct();
+    t.crud.deleteOneProduct();
+    t.crud.deleteManyProduct();
+    t.crud.updateOneProduct();
+    t.crud.updateManyProduct();
   },
 });
 
-
-
-// schema.queryType({
-//   definition(t) {
-//     t.list.field("allUsers", {
-//       type: "Ppl",
-//       resolve(_parent, _args, ctx) {
-//         return ctx.db.ppl.findMany({});
-//       },
-//     });
-//
-//     t.crud.ppl();
-//     t.crud.ppls();
-//   },
-// });
-//
 // schema.mutationType({
 //   definition(t) {
 //     t.field("bigRedButton", {

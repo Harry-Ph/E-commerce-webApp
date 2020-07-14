@@ -9,8 +9,8 @@ export type Ppl = {
   name: string
 }
 
-// export type Book = {
-//   id: number
-//   name: string
-// }
+export type Product = {
+  id: number
+  name: string
+}
 

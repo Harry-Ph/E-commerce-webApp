@@ -9,11 +9,11 @@ export const AllUsersQuery = gql`
   }
 `;
 
-// export const AllBooksQuery = gql`
-//     query AllBooks {
-//         allBooks {
-//             id
-//             name
-//         }
-//     }
-// `;
+export const AllProductsQuery = gql`
+    query AllProducts {
+        allProducts {
+            id
+            name
+        }
+    }
+`;
