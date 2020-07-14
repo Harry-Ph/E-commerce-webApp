@@ -35,8 +35,7 @@ schema.queryType({
       type: "Product",
       resolve(_parent, _args, ctx) {
         console.log(ctx.db)
-        // @ts-ignore
-        return ctx.db.product!.findMany({});
+        return ctx.db.product.findMany({});
       },
     });
 
@@ -64,8 +63,7 @@ schema.mutationType({
     t.field("productMutation", {
       type: "String",
       async resolve(_parent, _args, ctx) {
-        // @ts-ignore
-        const { count } = await ctx.db.product!.deleteMany({});
+        const { count } = await ctx.db.product.deleteMany({});
         return `${count} user(s) destroyed. Thanos will be proud.`;
       },
     });
