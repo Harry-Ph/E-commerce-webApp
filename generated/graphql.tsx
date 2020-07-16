@@ -16,12 +16,61 @@ export type Scalars = {
   Json: any;
 };
 
-export type BatchPayload = {
-  __typename?: 'BatchPayload';
-  count: Scalars['Int'];
+export type Query = {
+  __typename?: 'Query';
+  allUsers?: Maybe<Array<Ppl>>;
+  ppl?: Maybe<Ppl>;
+  ppls: Array<Ppl>;
+  allProducts?: Maybe<Array<Product>>;
+  product?: Maybe<Array<Product>>;
+  products: Array<Product>;
 };
 
 
+export type QueryPplArgs = {
+  where: PplWhereUniqueInput;
+};
+
+
+export type QueryPplsArgs = {
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  before?: Maybe<PplWhereUniqueInput>;
+  after?: Maybe<PplWhereUniqueInput>;
+};
+
+
+export type QueryProductArgs = {
+  id?: Maybe<Scalars['String']>;
+};
+
+
+export type QueryProductsArgs = {
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  before?: Maybe<ProductWhereUniqueInput>;
+  after?: Maybe<ProductWhereUniqueInput>;
+};
+
+export type Ppl = {
+  __typename?: 'Ppl';
+  id: Scalars['String'];
+  name: Scalars['String'];
+};
+
+export type PplWhereUniqueInput = {
+  id?: Maybe<Scalars['String']>;
+};
+
+export type Product = {
+  __typename?: 'Product';
+  id: Scalars['String'];
+  name: Scalars['String'];
+};
+
+export type ProductWhereUniqueInput = {
+  id?: Maybe<Scalars['String']>;
+};
 
 export type Mutation = {
   __typename?: 'Mutation';
@@ -31,6 +80,12 @@ export type Mutation = {
   deleteManyPpl: BatchPayload;
   updateOnePpl?: Maybe<Ppl>;
   updateManyPpl: BatchPayload;
+  productMutation?: Maybe<Scalars['String']>;
+  createOneProduct: Product;
+  deleteOneProduct?: Maybe<Product>;
+  deleteManyProduct: BatchPayload;
+  updateOneProduct?: Maybe<Product>;
+  updateManyProduct: BatchPayload;
 };
 
 
@@ -60,25 +115,36 @@ export type MutationUpdateManyPplArgs = {
   where?: Maybe<PplWhereInput>;
 };
 
-export type Ppl = {
-  __typename?: 'Ppl';
-  id: Scalars['String'];
-  name: Scalars['String'];
+
+export type MutationCreateOneProductArgs = {
+  data: ProductCreateInput;
+};
+
+
+export type MutationDeleteOneProductArgs = {
+  where: ProductWhereUniqueInput;
+};
+
+
+export type MutationDeleteManyProductArgs = {
+  where?: Maybe<ProductWhereInput>;
+};
+
+
+export type MutationUpdateOneProductArgs = {
+  data: ProductUpdateInput;
+  where: ProductWhereUniqueInput;
+};
+
+
+export type MutationUpdateManyProductArgs = {
+  data: ProductUpdateManyMutationInput;
+  where?: Maybe<ProductWhereInput>;
 };
 
 export type PplCreateInput = {
   id?: Maybe<Scalars['String']>;
   name: Scalars['String'];
-};
-
-export type PplUpdateInput = {
-  id?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-};
-
-export type PplUpdateManyMutationInput = {
-  id?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
 };
 
 export type PplWhereInput = {
@@ -87,30 +153,6 @@ export type PplWhereInput = {
   AND?: Maybe<Array<PplWhereInput>>;
   OR?: Maybe<Array<PplWhereInput>>;
   NOT?: Maybe<Array<PplWhereInput>>;
-};
-
-export type PplWhereUniqueInput = {
-  id?: Maybe<Scalars['String']>;
-};
-
-export type Query = {
-  __typename?: 'Query';
-  allUsers?: Maybe<Array<Ppl>>;
-  ppl?: Maybe<Ppl>;
-  ppls: Array<Ppl>;
-};
-
-
-export type QueryPplArgs = {
-  where: PplWhereUniqueInput;
-};
-
-
-export type QueryPplsArgs = {
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  before?: Maybe<PplWhereUniqueInput>;
-  after?: Maybe<PplWhereUniqueInput>;
 };
 
 export type StringFilter = {
@@ -127,6 +169,46 @@ export type StringFilter = {
   endsWith?: Maybe<Scalars['String']>;
 };
 
+export type BatchPayload = {
+  __typename?: 'BatchPayload';
+  count: Scalars['Int'];
+};
+
+export type PplUpdateInput = {
+  id?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
+};
+
+export type PplUpdateManyMutationInput = {
+  id?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
+};
+
+export type ProductCreateInput = {
+  id?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+};
+
+export type ProductWhereInput = {
+  id?: Maybe<StringFilter>;
+  name?: Maybe<StringFilter>;
+  AND?: Maybe<Array<ProductWhereInput>>;
+  OR?: Maybe<Array<ProductWhereInput>>;
+  NOT?: Maybe<Array<ProductWhereInput>>;
+};
+
+export type ProductUpdateInput = {
+  id?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
+};
+
+export type ProductUpdateManyMutationInput = {
+  id?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
+};
+
+
+
 export type AllUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -135,6 +217,17 @@ export type AllUsersQuery = (
   & { allUsers?: Maybe<Array<(
     { __typename?: 'Ppl' }
     & Pick<Ppl, 'id' | 'name'>
+  )>> }
+);
+
+export type AllProductsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type AllProductsQuery = (
+  { __typename?: 'Query' }
+  & { allProducts?: Maybe<Array<(
+    { __typename?: 'Product' }
+    & Pick<Product, 'id' | 'name'>
   )>> }
 );
 
@@ -150,4 +243,16 @@ export const AllUsersDocument = gql`
 
 export function useAllUsersQuery(options: Omit<Urql.UseQueryArgs<AllUsersQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<AllUsersQuery>({ query: AllUsersDocument, ...options });
+};
+export const AllProductsDocument = gql`
+    query AllProducts {
+  allProducts {
+    id
+    name
+  }
+}
+    `;
+
+export function useAllProductsQuery(options: Omit<Urql.UseQueryArgs<AllProductsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<AllProductsQuery>({ query: AllProductsDocument, ...options });
 };

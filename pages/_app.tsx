@@ -3,7 +3,6 @@ import { withUrqlClient, NextUrqlAppContext } from "next-urql";
 import NextApp, { AppProps } from "next/app";
 import fetch from "isomorphic-unfetch";
 import NavBar from '../components/NavBar/NavBar'
-import Content from '../components/Content/Content'
 import Footer from '../components/Footer/Footer'
 
 import Head from 'next/head';
@@ -11,9 +10,11 @@ import Head from 'next/head';
 import { ThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import theme from '../theme';
+import {ApolloProvider} from "@apollo/client";
+import client from "./apollo";
 
 // the URL to /api/graphql
-const GRAPHQL_ENDPOINT = `http://localhost:3000/api/graphql`;
+export const GRAPHQL_ENDPOINT = `http://localhost:3000/api/graphql`;
 
 const App = ({ Component, pageProps }: AppProps) => {
   React.useEffect(() => {
@@ -22,7 +23,7 @@ const App = ({ Component, pageProps }: AppProps) => {
     if (jssStyles) {
       jssStyles.parentElement!.removeChild(jssStyles);
     }
-  }, []); 
+  }, []);
 
   return  <React.Fragment>
       <Head>
@@ -33,7 +34,9 @@ const App = ({ Component, pageProps }: AppProps) => {
         {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
         <CssBaseline />
         <NavBar/>
-        <Content />
+          <ApolloProvider client={client}>
+              <Component {...pageProps} />
+          </ApolloProvider>);
         <Footer />
       </ThemeProvider>
     </React.Fragment>

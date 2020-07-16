@@ -12,24 +12,65 @@ schema.objectType({
 });
 
 schema.objectType({
-  name: "Book",
+  name: "Product",
   definition(t) {
     t.model.id();
     t.model.name();
   },
 });
 
+schema.addToContext(_req => {
+  return {
+    customReq: _req,
+  }
+})
+
+
 schema.queryType({
-  definition(t) {
+  async definition(t) {
     t.list.field("allUsers", {
       type: "Ppl",
       resolve(_parent, _args, ctx) {
+        console.log('ctx', ctx)
         return ctx.db.ppl.findMany({});
       },
     });
 
     t.crud.ppl();
     t.crud.ppls();
+
+    t.list.field("allProducts", {
+      type: "Product",
+      resolve(_parent, _args, ctx) {
+        return ctx.db.product.findMany({
+        });
+      },
+    });
+
+    t.list.field("product", {
+      type: "Product",
+      args: { queryStr: schema.stringArg({nullable: true})},
+      resolve: async(_parent, _args, ctx) => {
+        try {
+          const product = await ctx.db.product.findMany({
+            where: {
+              OR: [
+                { id: _args?.queryStr! },
+                { name: _args?.queryStr! },
+              ],
+            },
+          });
+          // const product = t.crud.product(_args?.id!.toString() as ProductWhereUniqueInput);
+          return product;
+        } catch (error) {
+          throw  new Error(error)
+        }
+
+    }
+  });
+
+    // t.crud.product();
+    t.crud.products();
   },
 });
 
@@ -48,25 +89,23 @@ schema.mutationType({
     t.crud.deleteManyPpl();
     t.crud.updateOnePpl();
     t.crud.updateManyPpl();
+
+    t.field("productMutation", {
+      type: "String",
+      async resolve(_parent, _args, ctx) {
+        const { count } = await ctx.db.product.deleteMany({});
+        return `${count} user(s) destroyed. Thanos will be proud.`;
+      },
+    });
+
+    t.crud.createOneProduct();
+    t.crud.deleteOneProduct();
+    t.crud.deleteManyProduct();
+    t.crud.updateOneProduct();
+    t.crud.updateManyProduct();
   },
 });
 
-
-
-// schema.queryType({
-//   definition(t) {
-//     t.list.field("allUsers", {
-//       type: "Ppl",
-//       resolve(_parent, _args, ctx) {
-//         return ctx.db.ppl.findMany({});
-//       },
-//     });
-//
-//     t.crud.ppl();
-//     t.crud.ppls();
-//   },
-// });
-//
 // schema.mutationType({
 //   definition(t) {
 //     t.field("bigRedButton", {
