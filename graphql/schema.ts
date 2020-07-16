@@ -19,11 +19,19 @@ schema.objectType({
   },
 });
 
+schema.addToContext(_req => {
+  return {
+    customReq: _req,
+  }
+})
+
+
 schema.queryType({
-  definition(t) {
+  async definition(t) {
     t.list.field("allUsers", {
       type: "Ppl",
       resolve(_parent, _args, ctx) {
+        console.log('ctx', ctx)
         return ctx.db.ppl.findMany({});
       },
     });
@@ -34,12 +42,34 @@ schema.queryType({
     t.list.field("allProducts", {
       type: "Product",
       resolve(_parent, _args, ctx) {
-        console.log(ctx.db)
-        return ctx.db.product.findMany({});
+        return ctx.db.product.findMany({
+        });
       },
     });
 
-    t.crud.product();
+    t.list.field("product", {
+      type: "Product",
+      args: { queryStr: schema.stringArg({nullable: true})},
+      resolve: async(_parent, _args, ctx) => {
+        try {
+          const product = await ctx.db.product.findMany({
+            where: {
+              OR: [
+                { id: _args?.queryStr! },
+                { name: _args?.queryStr! },
+              ],
+            },
+          });
+          // const product = t.crud.product(_args?.id!.toString() as ProductWhereUniqueInput);
+          return product;
+        } catch (error) {
+          throw  new Error(error)
+        }
+
+    }
+  });
+
+    // t.crud.product();
     t.crud.products();
   },
 });
