@@ -102,7 +102,7 @@ type Query {
   allUsers: [Ppl!]
   ppl(where: PplWhereUniqueInput!): Ppl
   ppls(after: PplWhereUniqueInput, before: PplWhereUniqueInput, first: Int, last: Int): [Ppl!]!
-  product(where: ProductWhereUniqueInput!): Product
+  product(queryStr: String): [Product!]
   products(after: ProductWhereUniqueInput, before: ProductWhereUniqueInput, first: Int, last: Int): [Product!]!
 }
 

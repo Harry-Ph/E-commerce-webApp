@@ -14,7 +14,7 @@ const ALL_PRODUCTS = gql`
 const AboutPage = () => {
     const { loading, error, data } = useQuery(ALL_PRODUCTS);
     if (loading) return 'Loading...';
-    if (error) return `Error! ${error.message}`;
+    if (error) console.log(error.message);
     console.log(data)
     return <Layout title="About | Next.js + TypeScript Example">
         <h1>About</h1>
