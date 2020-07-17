@@ -1,10 +1,14 @@
-import { makeStyles, createStyles, Theme} from '@material-ui/core'
+import { makeStyles, createStyles} from '@material-ui/core'
 
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles(() =>
   createStyles({
     footer: {
-      backgroundColor: 'black',
-      color: 'white'
+        backgroundColor: '#000',
+        color: '#fff',
+        width: '100%',
+        bottom: '0',
+        height: '300px',
+        display: 'none'
     },
     footer__info: {
       padding: '16px 0 0 0',

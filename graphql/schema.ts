@@ -31,7 +31,6 @@ schema.queryType({
     t.list.field("allUsers", {
       type: "Ppl",
       resolve(_parent, _args, ctx) {
-        console.log('ctx', ctx)
         return ctx.db.ppl.findMany({});
       },
     });
@@ -41,8 +40,16 @@ schema.queryType({
 
     t.list.field("allProducts", {
       type: "Product",
+      args: {
+        skip: schema.stringArg({nullable: true}),
+        take: schema.stringArg({nullable: true}),
+      },
       resolve(_parent, _args, ctx) {
+        console.log(_args.skip, _args.take)
+        console.log(333)
         return ctx.db.product.findMany({
+          skip: parseInt(_args?.skip!),
+          take: parseInt(_args?.take!),
         });
       },
     });
@@ -70,7 +77,7 @@ schema.queryType({
   });
 
     // t.crud.product();
-    t.crud.products();
+    // t.crud.products();
   },
 });
 

@@ -1,9 +1,25 @@
 import React from 'react'
-import {Button, Card, CardActions, CardContent, CardMedia, Typography} from "@material-ui/core";
+import {Button, Card, CardActions, CardContent, CardMedia, Typography} from "@material-ui/core"
 import useStyles from './style'
+import { useQuery, gql } from '@apollo/client'
+
+const DETAIL_PRODUCT = gql`
+    query product($queryStr: String!) {
+        product(queryStr: $queryStr) {
+            id
+            name
+        }
+    }
+`
 
 const ProductDetail = () => {
     const classes = useStyles()
+    const { loading, error, data } = useQuery(DETAIL_PRODUCT, {
+        variables: {queryStr: 'ckcmfyx810043xg9ktc93hmmj'}
+    });
+    if (loading) return 'Loading...';
+    if (error) console.log(error.message);
+    console.log(data)
     return (
         <Card className={classes.root}>
             <CardMedia

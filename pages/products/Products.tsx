@@ -71,7 +71,7 @@ export default function Products({products}: IProducts) {
                 }
             </div>
         </div>
-    )
+        )
 }
 
 export const getStaticProps:GetStaticProps = async () => {

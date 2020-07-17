@@ -22,7 +22,7 @@ const Footer = () => {
                     <Typography className={classes.footer__tittle}>BECOME A MEMBER</Typography>
                     <Typography className={classes.footer__tittle}>STUDENT DISCOUNT</Typography>
                 </div>
-                <div className={classes.info}>
+                <div>
                     <Typography className={classes.footer__tittle}>GET HELP</Typography>
                     <Typography className={classes.footer__modify}>Order Status</Typography>
                     <Typography className={classes.footer__modify}>Shipping and Delivery</Typography>
@@ -30,7 +30,7 @@ const Footer = () => {
                     <Typography className={classes.footer__modify}>Payment Options</Typography>
                     <Typography className={classes.footer__modify}>Contact Us</Typography>
                 </div>
-                <div className={classes.info}>
+                <div>
                     <Typography className={classes.footer__tittle}>ABOUT US</Typography>
                     <Typography className={classes.footer__modify}>News</Typography>
                     <Typography className={classes.footer__modify}>Careers</Typography>

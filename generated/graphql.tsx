@@ -23,7 +23,6 @@ export type Query = {
   ppls: Array<Ppl>;
   allProducts?: Maybe<Array<Product>>;
   product?: Maybe<Array<Product>>;
-  products: Array<Product>;
 };
 
 
@@ -40,16 +39,14 @@ export type QueryPplsArgs = {
 };
 
 
-export type QueryProductArgs = {
-  id?: Maybe<Scalars['String']>;
+export type QueryAllProductsArgs = {
+  skip?: Maybe<Scalars['String']>;
+  take?: Maybe<Scalars['String']>;
 };
 
 
-export type QueryProductsArgs = {
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  before?: Maybe<ProductWhereUniqueInput>;
-  after?: Maybe<ProductWhereUniqueInput>;
+export type QueryProductArgs = {
+  queryStr?: Maybe<Scalars['String']>;
 };
 
 export type Ppl = {
@@ -66,10 +63,6 @@ export type Product = {
   __typename?: 'Product';
   id: Scalars['String'];
   name: Scalars['String'];
-};
-
-export type ProductWhereUniqueInput = {
-  id?: Maybe<Scalars['String']>;
 };
 
 export type Mutation = {
@@ -187,6 +180,10 @@ export type PplUpdateManyMutationInput = {
 export type ProductCreateInput = {
   id?: Maybe<Scalars['String']>;
   name: Scalars['String'];
+};
+
+export type ProductWhereUniqueInput = {
+  id?: Maybe<Scalars['String']>;
 };
 
 export type ProductWhereInput = {

@@ -16,6 +16,9 @@ const theme = createMuiTheme({
     background: {
       default: '#fff',
     },
+    minHeight: {
+      default: '600px'
+    }
   },
 });
 

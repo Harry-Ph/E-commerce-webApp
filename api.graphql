@@ -98,12 +98,11 @@ input ProductWhereUniqueInput {
 }
 
 type Query {
-  allProducts: [Product!]
+  allProducts(skip: String, take: String): [Product!]
   allUsers: [Ppl!]
   ppl(where: PplWhereUniqueInput!): Ppl
   ppls(after: PplWhereUniqueInput, before: PplWhereUniqueInput, first: Int, last: Int): [Ppl!]!
   product(queryStr: String): [Product!]
-  products(after: ProductWhereUniqueInput, before: ProductWhereUniqueInput, first: Int, last: Int): [Product!]!
 }
 
 input StringFilter {
