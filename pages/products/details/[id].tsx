@@ -6,6 +6,7 @@ import {GetStaticPaths, GetStaticProps} from "next";
 import client from "../../apollo";
 import Loading from "../../../components/Loading";
 import {Product} from "../../../interfaces";
+import {typeAlias} from "@babel/types";
 
 const DETAIL_PRODUCT = gql`
     query product($queryStr: String!) {
@@ -82,18 +83,23 @@ export const getStaticProps:GetStaticProps = async (ctx) => {
 }
 
 export const getStaticPaths:GetStaticPaths<{id:string}> = async () => {
+    const take = '2';
     const {  data } = await client.query({
         query: ALL_PRODUCTS,
         variables: {
             skip: "0",
-            take: "2"
+            take: take
         }
     })
-    console.log('data-->', data)
+
+    let arr = Object.keys(data).map((k) => data[k])[0]
+
+    const paths = arr.slice(0, +take).map((p)=> {
+        return {params: {id: p.id}}
+    })
+    console.log('arr...-=', paths)
     return {
         fallback: true,
-        paths: [{
-            params: {id:'ckcmfyx810043xg9ktc93hmmj'}
-        }]
+        paths
     }
 }
