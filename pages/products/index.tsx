@@ -1,12 +1,13 @@
 import React from 'react'
 import useStyles from './style'
 import { Card, CardMedia, CardContent, Typography, CardActionArea, CardActions, Button } from '@material-ui/core'
-import {GetStaticProps, InferGetStaticPropsType} from "next";
+import {GetStaticProps} from "next";
 import Loading from "../../components/Loading";
 import {gql} from "@apollo/client";
 import client from "../apollo";
 import {Product} from "../../interfaces";
 import Link from "next/link";
+import {useRouter} from "next/router";
 
 
 const ALL_PRODUCTS = gql`
@@ -23,10 +24,13 @@ export interface IProducts {
 }
 
 export default function Products({products}: IProducts) {
-    // console.log('data-->....->', products)
-    // if (!products || products.length === 0) return <Loading/>
-    //
-    const classes = useStyles()
+    const classes = useStyles();
+
+    const router = useRouter();
+    if( router.isFallback || !products) {
+        return <Loading/>
+    }
+
     console.log('res?.data', products)
     return (
         <div className={classes.wrapper}>

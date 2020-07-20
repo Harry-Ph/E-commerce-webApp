@@ -1,11 +1,11 @@
 import React from 'react'
 import {Button, Card, CardActions, CardContent, CardMedia, Typography} from "@material-ui/core"
 import useStyles from '../style'
-import { useQuery, gql } from '@apollo/client'
+import { gql } from '@apollo/client'
 import {GetStaticPaths, GetStaticProps} from "next";
 import client from "../../apollo";
-import {useRouter } from "next/router";
 import Loading from "../../../components/Loading";
+import {Product} from "../../../interfaces";
 
 const DETAIL_PRODUCT = gql`
     query product($queryStr: String!) {
@@ -24,13 +24,15 @@ const ALL_PRODUCTS = gql`
     }
 `
 
+export interface IProduct {
+    product: Product
+}
 
-export default function ProductDetails ({product}) {
-    const router = useRouter();
-    if( router.isFallback || !product) {
+export default function ProductDetails ({product}: IProduct) {
+    if( !product) {
         return <Loading/>
     }
-console.log('......', product.product[0])
+
     const classes = useStyles()
     return (
     <Card className={classes.root}>
@@ -66,7 +68,7 @@ console.log('......', product.product[0])
 
 export const getStaticProps:GetStaticProps = async (ctx) => {
     console.log('ctx?.params?.id', ctx?.params?.id )
-    const { loading, error, data } = await client.query({
+    const {data } = await client.query({
         query: DETAIL_PRODUCT,
         variables: {queryStr: ctx?.params?.id}
     })

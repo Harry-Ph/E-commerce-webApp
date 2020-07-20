@@ -33,4 +33,4 @@ yarn.lock
 # json files
 package-lock.json
 
-.env
+#.env
