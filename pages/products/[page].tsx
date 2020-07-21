@@ -106,8 +106,8 @@ export const getStaticProps:GetStaticProps = async (ctx) => {
   const {  data } = await client.query({
     query: ALL_PRODUCTS,
     variables: {
-      skip: '0',
-      take: take
+      skip: first,
+      take: last
     }
   })
 
