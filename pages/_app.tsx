@@ -53,11 +53,9 @@ const App = ({ Component, pageProps }: AppProps) => {
         <CssBaseline />
         <NavBar/>
           <div className={classes.contentApp}>
-              <Container >
-                  <ApolloProvider client={client}>
-                      <Component {...pageProps} />
-                  </ApolloProvider>
-              </Container>
+            <ApolloProvider client={client}>
+              <Component {...pageProps} />
+            </ApolloProvider>
           </div>
         <Footer />
       </ThemeProvider>

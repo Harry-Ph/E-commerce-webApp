@@ -36,7 +36,7 @@ const FormData = () => {
                                     <ErrorMessage name="username" />
                                 </FormGroup>
                             </Box>
-                            <Box>
+                            <Box className={classes.margin}>
                                 <FormGroup>
                                     <Field name="email" as={TextField} label="Email"/>
                                     <ErrorMessage name="email" />

@@ -4,6 +4,7 @@ const useStyles = makeStyles(() =>
   createStyles({
     grow: {
       flexGrow: 1,
+      marginBottom: '1rem'
     },
     toolBar1: {
       display: 'grid',
