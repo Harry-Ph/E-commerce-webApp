@@ -1,5 +1,6 @@
 import React from 'react'
 import useStyles from './style'
+import { PaginationRenderItemParams } from '@material-ui/lab';
 import { Card, CardMedia, CardContent, Typography, CardActionArea, CardActions, Button } from '@material-ui/core'
 import {GetStaticProps} from "next";
 import Loading from "../../components/Loading";
@@ -8,7 +9,10 @@ import client from "../apollo";
 import {Product} from "../../interfaces";
 import Link from "next/link";
 import {useRouter} from "next/router";
-
+import Pagination from '@material-ui/lab/Pagination';
+import PaginationItem from '@material-ui/lab/PaginationItem';
+import { ParsedUrlQuery } from 'querystring';
+import {useAllProductsQuery} from "../../generated/graphql";
 
 const ALL_PRODUCTS = gql`
     query allProducts($skip: String!, $take: String!) {
@@ -21,22 +25,34 @@ const ALL_PRODUCTS = gql`
 
 export interface IProducts {
     products: Product[]
+  loading: boolean
 }
 
-export default function Products({products}: IProducts) {
+export default function Products({ loading, products }: IProducts) {
     const classes = useStyles();
 
     const router = useRouter();
-    if( router.isFallback || !products) {
+    if( loading || !products) {
         return <Loading/>
     }
 
-    console.log('res?.data', products)
     return (
         <div className={classes.wrapper}>
             <div className={classes.content__tittle}>
                 <div>POPULAR PRODUCTS</div>
             </div>
+            <Pagination
+              page={parseInt(router.query.page as string || '1')}
+              count={10}
+              renderItem={(item) => (
+                <PaginationItem
+                  component={MaterialUiLink}
+                  query={router.query}
+                  item={item}
+                  {...item}
+                />
+              )}
+            />
             <div className={classes.content__items}>
                 {
                     products?.map(p=> (
@@ -78,19 +94,67 @@ export default function Products({products}: IProducts) {
     )
 }
 
-export const getStaticProps:GetStaticProps = async () => {
-    const {  data } = await client.query({
-        query: ALL_PRODUCTS,
-        variables: {
-            skip: "0",
-            take: "2"
-        }
-    })
-    console.log('data-->', data)
+// export const getStaticProps:GetStaticProps = async () => {
+//     const take = '2';
+//     const {  data } = await client.query({
+//         query: ALL_PRODUCTS,
+//         variables: {
+//             skip: "0",
+//             take: take
+//         }
+//     })
+//
+//     let arr = Object.keys(data).map((k) => data[k])[0]
+//
+//     return {
+//         props: {
+//             products: data!.allProducts
+//         },
+//     }
+// }
 
-    return {
-        props: {
-            products: data!.allProducts
-        },
+export async function getServerSideProps(context) {
+  const pageQuery = (context.query?.page || 1) as string;
+  const take = 3;
+
+  const first = String((+pageQuery -1) * (+take))
+  // if (+pageQuery < totalItems) {
+  //   last = +pageQuery * pageQuery
+  //   if (last > totalItems) {
+  //     last = totalItems;
+  //   }
+  // }
+  const preCalLastItem = (parseInt(pageQuery) - 1) === 0 ? 1 : (parseInt(pageQuery) - 1)
+  const last = String(preCalLastItem * (+take))
+
+  console.log('first--->', first )
+  const { loading, data } = await client.query({
+    query: ALL_PRODUCTS,
+    variables: {
+      skip: first,
+      take: last
     }
+
+  })
+  const products = Object.keys(data).map((k) => data[k])[0]
+  return {props: { loading, products }}
 }
+
+export interface MaterialUiLinkProps {
+    item: PaginationRenderItemParams;
+    query: ParsedUrlQuery;
+}
+
+export function MaterialUiLink({ item, query, ...props }: MaterialUiLinkProps) {
+    return (
+      <Link
+        href={{
+            pathname: '/products',
+            query: { ...query, page: item.page },
+        }}
+      >
+          <a {...props}></a>
+      </Link>
+    );
+}
+
