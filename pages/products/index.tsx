@@ -12,7 +12,8 @@ import {useRouter} from "next/router";
 import Pagination from '@material-ui/lab/Pagination';
 import PaginationItem from '@material-ui/lab/PaginationItem';
 import { ParsedUrlQuery } from 'querystring';
-import {useAllProductsQuery} from "../../generated/graphql";
+import { PrismaClient } from "@prisma/client"
+const prisma2 = new PrismaClient()
 
 const ALL_PRODUCTS = gql`
     query allProducts($skip: String!, $take: String!) {
@@ -25,9 +26,10 @@ const ALL_PRODUCTS = gql`
 
 export interface IProducts {
   products: Product[]
+  numberPages: number
 }
 
-export default function Products({ products }: IProducts) {
+export default function Products({ products, numberPages }: IProducts) {
   const classes = useStyles();
 
   const router = useRouter();
@@ -42,7 +44,7 @@ export default function Products({ products }: IProducts) {
       </div>
       <Pagination
         page={parseInt(router.query.page as string || '1')}
-        count={10}
+        count={numberPages || 0}
         defaultPage={1}
         renderItem={(item) => (
           <PaginationItem
@@ -95,14 +97,14 @@ export default function Products({ products }: IProducts) {
 }
 
 export const getStaticProps:GetStaticProps = async (ctx) => {
-  console.log('day la thu can lay..', ctx?.params?.page );
+  const take = '3';
+  const totalProducts = await prisma2.product.findMany();
+  const productsArray = Object.keys(totalProducts).map((k) => totalProducts[k])
+  const numberPages = Math.ceil((productsArray?.length || 0) as number / +take) as number;
 
   const pageQuery = (ctx?.params?.page || 1) as string;
 
-  const take = '3';
-  const first = String((parseInt(pageQuery) -1) * (+take))
   const preCalLastItem = (parseInt(pageQuery) - 1) === 0 ? 1 : (parseInt(pageQuery) - 1)
-  const last = String(preCalLastItem * (+take))
   const {  data } = await client.query({
     query: ALL_PRODUCTS,
     variables: {
@@ -115,7 +117,8 @@ export const getStaticProps:GetStaticProps = async (ctx) => {
 
   return {
     props: {
-      products
+      products,
+      numberPages
     },
   }
 }
