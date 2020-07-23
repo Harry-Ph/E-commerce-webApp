@@ -1,0 +1,16 @@
+schema: 'http://localhost:4000/graphql'
+documents: graphql/**/*.graphql.ts
+extensions:
+  codegen:
+    generates:
+      generated/graphql.tsx:
+        config:
+          withComponent: false
+          withHooks: true
+        plugins:
+          - typescript
+          - typescript-operations
+          - typescript-urql
+    overwrite: true
+  diff:
+    baseSchema: your-base-schema-here

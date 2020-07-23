@@ -5,7 +5,6 @@ import fetch from "isomorphic-unfetch";
 import NavBar from '../components/NavBar/NavBar'
 import Footer from '../components/Footer/Footer'
 import {Router} from 'next/dist/client/router'
-import { Container } from 'next/app';
 import Head from 'next/head';
 
 import { ThemeProvider } from '@material-ui/core/styles';

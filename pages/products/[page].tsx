@@ -11,6 +11,8 @@ import Link from "next/link";
 import {useRouter} from "next/router";
 import Pagination from '@material-ui/lab/Pagination';
 import PaginationItem from '@material-ui/lab/PaginationItem';
+import Skeleton from '@material-ui/lab/Skeleton';
+import Box from '@material-ui/core/Box';
 import { ParsedUrlQuery } from 'querystring';
 import { PrismaClient } from "@prisma/client"
 const prisma2 = new PrismaClient()
@@ -26,70 +28,85 @@ const ALL_PRODUCTS = gql`
 
 export interface IProducts {
   products: Product[]
-  numberPages: number
+  numberPages: number,
+  data: any
 }
 
-export default function Products({ products, numberPages }: IProducts) {
+export default function Products({ products, data, numberPages }: IProducts) {
   const classes = useStyles();
 
+  console.log('products1', products)
+  console.log('data2', data)
   const router = useRouter();
-  if( router.isFallback || !products) {
-    return <Loading/>
-  }
+  // if( router.isFallback || !products) {
+  //   return <Loading/>
+  // }
 
   return (
     <div className={classes.wrapper}>
       <div className={classes.content__tittle}>
         <div>POPULAR PRODUCTS</div>
       </div>
-      <Pagination
-        page={parseInt(router.query.page as string || '1')}
-        count={numberPages || 0}
-        defaultPage={1}
-        renderItem={(item) => (
-          <PaginationItem
-            component={MaterialUiLink}
-            query={router.query}
-            item={item}
-            {...item}
-          />
-        )}
-      />
+      <Box className={classes.content__pagination}>
+        {
+          numberPages > 0 ? (<Pagination
+              page={parseInt(router.query.page as string || '1')}
+              count={numberPages}
+              defaultPage={1}
+              renderItem={(item) => (
+                <PaginationItem
+                  component={MaterialUiLink}
+                  query={router.query}
+                  item={item}
+                  {...item}
+                />
+              )}
+            />) :
+            <Skeleton variant="rect" width={'60vw'} height={'40px'} />
+        }
+      </Box>
       <div className={classes.content__items}>
         {
-          products?.map(p=> (
-            <Link href="/products/details/[id" as={`/products/details/${p.id}`}>
-              <Card className={classes.content__item}>
-                <CardActionArea>
-                  <CardMedia className={classes.item__media}
-                             image="https://cdn.bike24.net/i/mb/d8/fa/b2/277893-00-d-557791.jpg"
-                             title="Contemplative Reptile"
-                  />
-                  <CardContent>
-                    <Typography gutterBottom variant="h5" component="h2">
-                      {p?.name}
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary" component="p">
-                      Maximum impact cushioning. The brutal, repetitive,
-                      downward force of sport can wreak havoc on the body and on performance.
-                      Max Air cushioning is specifically engineered to handle these impacts and provide protection.
-                      Max Air is big air designed to take a pounding.
-                    </Typography>
-                    <Typography className={classes.item__price} >PRICE: 60.0 Euro</Typography>
-                  </CardContent>
-                </CardActionArea>
-                <CardActions>
-                  <Button size="small" color="primary">
-                    Add To Cart
-                  </Button>
-                  <Button size="small" color="primary">
-                    Learn More
-                  </Button>
-                </CardActions>
-              </Card>
-            </Link>
+          ((products && products.length > 0) || !router.isFallback) ?
+            (products?.map(p=> (
+              <Link href="/products/details/[id" as={`/products/details/${p.id}`}>
+                <Card className={classes.content__item}>
+                  <CardActionArea>
+                    <CardMedia className={classes.item__media}
+                               image="https://cdn.bike24.net/i/mb/d8/fa/b2/277893-00-d-557791.jpg"
+                               title="Contemplative Reptile"
+                    />
+                    <CardContent>
+                      <Typography gutterBottom variant="h5" component="h2">
+                        {p?.name}
+                      </Typography>
+                      <Typography variant="body2" color="textSecondary" component="p">
+                        Maximum impact cushioning. The brutal, repetitive,
+                        downward force of sport can wreak havoc on the body and on performance.
+                        Max Air cushioning is specifically engineered to handle these impacts and provide protection.
+                        Max Air is big air designed to take a pounding.
+                      </Typography>
+                      <Typography className={classes.item__price} >PRICE: 60.0 Euro</Typography>
+                    </CardContent>
+                  </CardActionArea>
+                  <CardActions>
+                    <Button size="small" color="primary">
+                      Add To Cart
+                    </Button>
+                    <Button size="small" color="primary">
+                      Learn More
+                    </Button>
+                  </CardActions>
+                </Card>
+              </Link>
 
-          ))
+            ))) :
+            <Box className={classes.content__skeleton}>
+              <Skeleton variant="rect" width={'28vw'} height={'600px'} />
+              <div className={classes.wrapper__loading}>
+                <Loading />
+              </div>
+            </Box>
         }
       </div>
     </div>
@@ -100,26 +117,26 @@ export const getStaticProps:GetStaticProps = async (ctx) => {
   const take = '3';
 
   const totalProducts = await prisma2.product.findMany();
-  const productsArray = Object.keys(totalProducts).map((k) => totalProducts[k])
+  const productsArray = Object.keys(totalProducts).map((k) => totalProducts[parseInt(k)])
   const numberPages = Math.ceil((productsArray?.length || 0) as number / +take) as number;
   const pageQuery = (ctx?.params?.page || 1) as string;
 
   const first = String((parseInt(pageQuery) -1) * (+take))
-  const preCalLastItem = (parseInt(pageQuery) - 1) === 0 ? 1 : (parseInt(pageQuery) - 1)
-  const last = String(preCalLastItem * (+take))
+
   const {  data } = await client.query({
     query: ALL_PRODUCTS,
     variables: {
       skip: first,
-      take: last
+      take: take
     }
   })
 
   const products = Object.keys(data).map((k) => data[k])[0]
-
+console.log(' server build...', data)
   return {
     props: {
       products,
+      data,
       numberPages
     },
   }
