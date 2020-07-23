@@ -27,6 +27,11 @@ export const theme = createMuiTheme({
   },
   spacing: 8,
   overrides: {
+    MuiCardMedia : {
+      root: {
+        backgroundSize: 'contain'
+      }
+    },
     MuiFilledInput: {
       root: {
         backgroundColor: '#69807D',

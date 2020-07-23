@@ -34,7 +34,8 @@ const useStyles = makeStyles((theme: Theme) =>
         width: '80%',
         height: '320px',
         textAlign: 'center',    
-        marginLeft: '20px'
+        margin: '20px',
+        padding: '20px'
     },
     item__price: {
         textAlign: 'right',

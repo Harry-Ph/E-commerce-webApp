@@ -66,7 +66,7 @@ export default function Products({ products, numberPages }: IProducts) {
         {
           ((products && products.length > 0) || !router.isFallback) ?
             (products?.map(p=> (
-              <Link href="/products/details/[id" as={`/products/details/${p.id}`}>
+              <Link href="/products/details/[id]" as={`/products/details/${p.id}`}>
                 <Card className={classes.content__item}>
                   <CardActionArea>
                     <CardMedia className={classes.item__media}
