@@ -1,22 +1,22 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-generator client {
-  provider = "prisma-client-js"
-}
-
 model Ppl {
-  id        String @default(cuid()) @id
-  username  String
-  email     String   @unique
-  password  String
-  role      String
-  status    Boolean @default(true)
+  email    String  @unique
+  id       String  @id
+  password String
+  role     String
+  status   Boolean @default(true)
+  username String
 }
 
 model Product {
-  id   String @default(cuid()) @id
+  id   String @id
   name String
 }

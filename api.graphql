@@ -6,6 +6,11 @@ type BatchPayload {
   count: Int!
 }
 
+input BooleanFilter {
+  equals: Boolean
+  not: Boolean
+}
+
 """
 A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the
 `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO
@@ -37,34 +42,55 @@ type Mutation {
 }
 
 type Ppl {
+  email: String!
   id: String!
-  name: String!
+  password: String!
+  role: String!
+  status: Boolean!
+  username: String!
 }
 
 input PplCreateInput {
-  id: String
-  name: String!
+  email: String!
+  id: String!
+  password: String!
+  role: String!
+  status: Boolean
+  username: String!
 }
 
 input PplUpdateInput {
+  email: String
   id: String
-  name: String
+  password: String
+  role: String
+  status: Boolean
+  username: String
 }
 
 input PplUpdateManyMutationInput {
+  email: String
   id: String
-  name: String
+  password: String
+  role: String
+  status: Boolean
+  username: String
 }
 
 input PplWhereInput {
   AND: [PplWhereInput!]
+  email: StringFilter
   id: StringFilter
-  name: StringFilter
   NOT: [PplWhereInput!]
   OR: [PplWhereInput!]
+  password: StringFilter
+  role: StringFilter
+  status: BooleanFilter
+  username: StringFilter
 }
 
 input PplWhereUniqueInput {
+  email: String
   id: String
 }
 
@@ -74,7 +100,7 @@ type Product {
 }
 
 input ProductCreateInput {
-  id: String
+  id: String!
   name: String!
 }
 

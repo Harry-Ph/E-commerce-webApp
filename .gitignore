@@ -34,3 +34,6 @@ yarn.lock
 package-lock.json
 
 #.env
+
+#migration
+/prisma/migrations
