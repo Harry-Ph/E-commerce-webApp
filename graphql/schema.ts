@@ -7,7 +7,11 @@ schema.objectType({
   name: "Ppl",
   definition(t) {
     t.model.id();
-    t.model.name();
+    t.model.username();
+    t.model.email();
+    t.model.password();
+    t.model.role();
+    t.model.status();
   },
 });
 
