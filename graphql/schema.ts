@@ -1,7 +1,15 @@
 import { schema, use } from "nexus";
 import { prisma } from "nexus-plugin-prisma";
+import { idArg } from "nexus/components/schema";
+import { PrismaClient } from 'nexus-plugin-prisma/client'
 
 use(prisma({ features: { crud: true } }));
+
+// use(
+//   prisma({
+//     client: { instance: new PrismaClient() },
+//   })
+// )
 
 schema.objectType({
   name: "Ppl",
@@ -104,6 +112,22 @@ schema.mutationType({
         return `${count} user(s) destroyed. Thanos will be proud.`;
       },
     });
+
+    t.field('removeProductById', {
+      type: 'Product',
+      nullable: true,
+      args: {
+        id: idArg(),
+      },
+      resolve(parent, {id}, ctx) {
+        return ctx.db.product.delete({
+          where: {
+            id: id!
+          }
+        })
+      }
+
+    })
 
     t.crud.createOneProduct();
     t.crud.deleteOneProduct();
