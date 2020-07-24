@@ -1,7 +1,8 @@
 import { schema, use } from "nexus";
 import { prisma } from "nexus-plugin-prisma";
-import { idArg } from "nexus/components/schema";
+import { idArg, stringArg } from "nexus/components/schema";
 import { PrismaClient } from 'nexus-plugin-prisma/client'
+import {arg} from "nexus/dist/lib/cli";
 
 use(prisma({ features: { crud: true } }));
 
@@ -105,13 +106,32 @@ schema.mutationType({
     t.crud.updateOnePpl();
     t.crud.updateManyPpl();
 
-    t.field("productMutation", {
+    t.field("removeAllProducts", {
       type: "String",
       async resolve(_parent, _args, ctx) {
-        const { count } = await ctx.db.product.deleteMany({});
-        return `${count} user(s) destroyed. Thanos will be proud.`;
+        try {
+          const { count } = await ctx.db.product.deleteMany({});
+          return `${count} product(s) destroyed.`;
+        } catch (e) {
+          throw  new Error(e)
+        }
       },
     });
+
+    // t.field("removeManyProducts", {
+    //   type: "String",
+    //   args: {
+    //     data: arg({Product[]})
+    //   },
+    //   async resolve(_parent, _args, ctx) {
+    //     try {
+    //       const { count } = await ctx.db.product.deleteMany({});
+    //       return `${count} product(s) destroyed.`;
+    //     } catch (e) {
+    //       throw  new Error(e)
+    //     }
+    //   },
+    // });
 
     t.field('removeProductById', {
       type: 'Product',
@@ -120,13 +140,58 @@ schema.mutationType({
         id: idArg(),
       },
       resolve(parent, {id}, ctx) {
-        return ctx.db.product.delete({
-          where: {
-            id: id!
-          }
-        })
+        try {
+          return ctx.db.product.delete({
+            where: {
+              id: id!
+            }
+          })
+        } catch (e) {
+          throw  new Error(e)
+        }
       }
+    })
 
+    t.field('updateProductById', {
+      type: 'Product',
+      nullable: true,
+      args: {
+        id: idArg(),
+        name: stringArg()
+      },
+      resolve(parent, {id, name}, ctx) {
+        try {
+          return ctx.db.product.update({
+            where: {
+              id: id!
+            },
+            data: {
+              name: name!
+            }
+          })
+        } catch (e) {
+          throw  new Error(e)
+        }
+      }
+    })
+
+    t.field('createNewOneProduct', {
+      type: 'Product',
+      nullable: true,
+      args: {
+        name: stringArg(),
+      },
+      resolve(parent, {name}, ctx) {
+        try {
+          return ctx.db.product.create({
+            data: {
+              name: name!
+            }
+          })
+        } catch (e) {
+          throw  new Error(e)
+        }
+      }
     })
 
     t.crud.createOneProduct();
