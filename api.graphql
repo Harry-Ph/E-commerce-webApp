@@ -20,17 +20,20 @@ scalar Json
 
 type Mutation {
   bigRedButton: String
+  createNewOneProduct(name: String): Product
   createOnePpl(data: PplCreateInput!): Ppl!
   createOneProduct(data: ProductCreateInput!): Product!
   deleteManyPpl(where: PplWhereInput): BatchPayload!
   deleteManyProduct(where: ProductWhereInput): BatchPayload!
   deleteOnePpl(where: PplWhereUniqueInput!): Ppl
   deleteOneProduct(where: ProductWhereUniqueInput!): Product
-  productMutation: String
+  removeAllProducts: String
+  removeProductById(id: ID): Product
   updateManyPpl(data: PplUpdateManyMutationInput!, where: PplWhereInput): BatchPayload!
   updateManyProduct(data: ProductUpdateManyMutationInput!, where: ProductWhereInput): BatchPayload!
   updateOnePpl(data: PplUpdateInput!, where: PplWhereUniqueInput!): Ppl
   updateOneProduct(data: ProductUpdateInput!, where: ProductWhereUniqueInput!): Product
+  updateProductById(id: ID, name: String): Product
 }
 
 type Ppl {
