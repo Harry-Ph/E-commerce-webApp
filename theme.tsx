@@ -27,6 +27,13 @@ export const theme = createMuiTheme({
   },
   spacing: 8,
   overrides: {
+    MuiTypography: {
+      root: {
+        textOverflow: 'ellipsis',
+        overflow: 'hidden !important',
+        maxHeight: '200px'
+      }
+    },
     MuiCardMedia : {
       root: {
         backgroundSize: 'contain'

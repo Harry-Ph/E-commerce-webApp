@@ -46,7 +46,7 @@ export default function Products({ products, numberPages }: IProducts) {
       </div>
       <Box className={classes.content__pagination}>
         {
-          numberPages > 0 ? (<Pagination
+          (numberPages > 0 || !router.isFallback) ? (<Pagination
               page={parseInt(router.query.page as string || '1')}
               count={numberPages}
               defaultPage={1}
@@ -59,7 +59,7 @@ export default function Products({ products, numberPages }: IProducts) {
                 />
               )}
             />) :
-            <Skeleton variant="rect" width={'60vw'} height={'40px'} />
+            <Skeleton variant="rect" width={'30vw'} height={'28px'} />
         }
       </Box>
       <div className={classes.content__items}>

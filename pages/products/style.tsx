@@ -20,11 +20,12 @@ const useStyles = makeStyles((theme: Theme) =>
     content__tittle: {
         textAlign: 'center',
         padding: '40px',
-        fontSize: '40px'
+        fontSize: '52px',
+        fontWeight: 'bold'
     },
     content__items: {
         display: 'flex',
-        maxHeight: '652px'
+        maxHeight: '720px'
     },
     content__item : {
         width: '30%',
@@ -32,7 +33,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     item__media: {
         width: '80%',
-        height: '320px',
+        height: '160px',
         textAlign: 'center',    
         margin: '20px',
         padding: '20px'
