@@ -4,7 +4,11 @@ export const AllUsersQuery = gql`
   query AllUsers {
     allUsers {
       id
-      name
+      username
+      email
+      password
+      role
+      status
     }
   }
 `;

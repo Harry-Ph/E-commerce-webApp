@@ -6,7 +6,13 @@
 
 export type Ppl = {
   id: number
-  name: string
+  username: string
+  email: string 
+  password: string
+  role: string
+  status: boolean
+  createdAt: string
+  updatedAt: string
 }
 
 export type Product = {
