@@ -7,6 +7,7 @@ import Layout from '../../components/Layout'
 import List from '../../components/List'
 import gql from 'graphql-tag'
 import client from '../apollo'
+import Table from '../../components/Table';
 
 type Props = {
   users: Ppl[]
@@ -33,7 +34,7 @@ const WithStaticProps = ({ users }: Props) => {
       Example fetching data from inside <code>getStaticProps()</code>.
     </p>
     <p>You are currently on: /users</p>
-    <List items={users} />
+    <Table items={users} />
     <p>
       <Link href="/api/books">
         <a>Go home</a>
