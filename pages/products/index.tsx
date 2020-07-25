@@ -134,17 +134,6 @@ export const getStaticProps:GetStaticProps = async (ctx) => {
   }
 }
 
-export const getStaticPaths:GetStaticPaths<{page:string}> = async () => {
-  return {
-    paths: [
-      { params: { page: '1' } },
-      { params: { page: '2' } },
-      { params: { page: '3' } }
-    ],
-    fallback: true
-  };
-}
-
 export interface MaterialUiLinkProps {
   item: PaginationRenderItemParams;
   query: ParsedUrlQuery;
@@ -160,4 +149,3 @@ export function MaterialUiLink({ item, query, ...props }: MaterialUiLinkProps) {
     </Link>
   );
 }
-

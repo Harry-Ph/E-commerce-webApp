@@ -76,15 +76,22 @@ const WithStaticProps = ({ users, numberPages }: Props) => {
   );
   }
 
-export const getStaticProps: GetStaticProps = async () => {
+  //users/1
+export const getStaticProps: GetStaticProps = async (ctx) => {
   const take = '4'
+//   const totalUsers = await prisma2.ppl.findMany();
+//   const usersArray = Object.keys(totalUsers).map((k) => totalUsers[k])
+//   const numberPages = Math.ceil((usersArray?.length || 0) as number / +take) as number;
   const totalUsers = await prisma2.ppl.findMany();
-  const usersArray = Object.keys(totalUsers).map((k) => totalUsers[k])
+  const usersArray = Object.keys(totalUsers).map((k) => totalUsers[parseInt(k)])
   const numberPages = Math.ceil((usersArray?.length || 0) as number / +take) as number;
+  const pageQuery = (ctx?.params?.page || 1) as string;
+
+  const first = String((parseInt(pageQuery) -1) * (+take))
   const { data } = await client.query({
             query: AllUsersQuery,
             variables: {
-              skip: '0',
+              skip: first,
               take: take
             }
         })
@@ -111,13 +118,15 @@ export function MaterialUiLink({ item, query, ...props }: MaterialUiLinkProps) {
     </Link>
   );
 }
+export const getStaticPaths:GetStaticPaths<{page:string}> = async () => {
+  // users/1
+  return {
+    paths: [
+      { params: { page: '1' } },
+      // { params: { page: '2' } },
+      // { params: { page: '3' } },
+    ],
 
-// export const getStaticPaths:GetStaticPaths<{page:string}> = async () => {
-//   return {
-//     paths: [
-//       { params: { page: '1' } },
-       
-//     ],
-//     fallback: true
-//   };
-// } 
+    fallback: true
+  };
+}
