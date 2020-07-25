@@ -1,21 +1,28 @@
-import { GetStaticProps } from 'next'
+import {  GetServerSideProps } from 'next'
 import Link from 'next/link'
 
 import { Ppl } from '../../interfaces'
-import { sampleUserData } from '../../utils/sample-data'
 import Layout from '../../components/Layout'
-import List from '../../components/List'
 import gql from 'graphql-tag'
 import client from '../apollo'
 import Table from '../../components/Table';
+import { Box } from '@material-ui/core'
+import Loading from '../../components/Loading'
+import { useRouter } from 'next/router'
+import { Pagination, PaginationItem, Skeleton, PaginationRenderItemParams } from '@material-ui/lab'
+import { ParsedUrlQuery } from 'querystring'
+import { PrismaClient } from '@prisma/client'
+const prisma2 = new PrismaClient()
 
 type Props = {
   users: Ppl[]
+  numberPages: number
+  loading: boolean
 }
 
 export const AllUsersQuery = gql`
-  query AllUsers {
-    allUsers {
+  query AllUsers($skip: String!, $take: String!) {
+    allUsers(skip: $skip, take: $take) {
       id
       username
       email
@@ -26,7 +33,13 @@ export const AllUsersQuery = gql`
   }
 `;
 
-const WithStaticProps = ({ users }: Props) => {
+
+
+const WithStaticProps = ({ loading, users, numberPages }: Props) => {
+  const router = useRouter();
+  if( loading || !users) {
+    return <Loading/>
+  }
   return (
     <Layout title="Users List | Next.js + TypeScript Example">
     <h1>Users List</h1>
@@ -34,6 +47,26 @@ const WithStaticProps = ({ users }: Props) => {
       Example fetching data from inside <code>getStaticProps()</code>.
     </p>
     <p>You are currently on: /users</p>
+    
+    <Box>
+        {
+          (numberPages > 0 || !loading) ? (<Pagination
+              page={parseInt(router.query.page as string || '1')}
+              count={numberPages}
+              defaultPage={1}
+              renderItem={(item) => (
+                <PaginationItem
+                  component={MaterialUiLink}
+                  query={router.query}
+                  item={item}
+                  {...item}
+                />
+              )}
+            />) :
+            <Skeleton variant="rect" width={'30vw'} height={'28px'} />
+        }
+    </Box>
+
     <Table items={users} />
     <p>
       <Link href="/api/books">
@@ -44,16 +77,53 @@ const WithStaticProps = ({ users }: Props) => {
   );
   }
 
-export const getStaticProps: GetStaticProps = async () => {
 
-  // Example for including static props in a Next.js function component page.
-  // Don't forget to include the respective types for any props passed into
-  // the component.
-  // const items: Ppl[] = sampleUserData; 
-  const { data } = await client.query({
-            query: AllUsersQuery
-        })
-  return { props: { users : data?.allUsers } }
-}
 
 export default WithStaticProps
+
+export interface MaterialUiLinkProps {
+  item: PaginationRenderItemParams;
+  query: ParsedUrlQuery;
+}
+
+export function MaterialUiLink({ item, query, ...props }: MaterialUiLinkProps) {
+  return (
+    <Link
+      href={
+        { // users?page=1
+          pathname: '/users',
+          query: {...query, page: item.page}
+        }
+      }
+    >
+      <a {...props}></a>
+    </Link>
+  );
+}
+
+export const getServerSideProps:GetServerSideProps = async (ctx) => {
+  const pageQuery = (ctx.query?.page || 1) as string;
+ctx.req
+  const take = '3';
+  const totalUsers = await prisma2.ppl.findMany();
+  const usersArray = Object.keys(totalUsers).map((k) => totalUsers[parseInt(k)])
+  const numberPages = Math.ceil((usersArray?.length || 0) as number / +take) as number;
+ 
+
+  const first = String((parseInt(pageQuery) -1) * (+take))
+  const { loading, data } = await client.query({
+            query: AllUsersQuery,
+            variables: {
+              skip: first,
+              take: take
+            }
+        })
+
+  return {
+    props: {
+      loading,
+      users: data?.allUsers,
+      numberPages
+    }
+  }
+}

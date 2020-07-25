@@ -43,8 +43,15 @@ schema.queryType({
   async definition(t) {
     t.list.field("allUsers", {
       type: "Ppl",
+      args: {
+        skip: schema.stringArg({nullable: true}),
+        take: schema.stringArg({nullable: true}),
+      },
       resolve(_parent, _args, ctx) {
-        return ctx.db.ppl.findMany({});
+        return ctx.db.ppl.findMany({
+          skip: parseInt(_args?.skip!),
+          take: parseInt(_args?.take!),
+        });
       },
     });
 
@@ -58,8 +65,6 @@ schema.queryType({
         take: schema.stringArg({nullable: true}),
       },
       resolve(_parent, _args, ctx) {
-        console.log(_args.skip, _args.take)
-        console.log(333)
         return ctx.db.product.findMany({
           skip: parseInt(_args?.skip!),
           take: parseInt(_args?.take!),
