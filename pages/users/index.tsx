@@ -1,4 +1,4 @@
-import { GetStaticProps, GetStaticPaths } from 'next'
+import {  GetServerSideProps } from 'next'
 import Link from 'next/link'
 
 import { Ppl } from '../../interfaces'
@@ -17,6 +17,7 @@ const prisma2 = new PrismaClient()
 type Props = {
   users: Ppl[]
   numberPages: number
+  loading: boolean
 }
 
 export const AllUsersQuery = gql`
@@ -34,9 +35,9 @@ export const AllUsersQuery = gql`
 
 
 
-const WithStaticProps = ({ users, numberPages }: Props) => {
+const WithStaticProps = ({ loading, users, numberPages }: Props) => {
   const router = useRouter();
-  if( router.isFallback || !users) {
+  if( loading || !users) {
     return <Loading/>
   }
   return (
@@ -49,7 +50,7 @@ const WithStaticProps = ({ users, numberPages }: Props) => {
     
     <Box>
         {
-          (numberPages > 0 || !router.isFallback) ? (<Pagination
+          (numberPages > 0 || !loading) ? (<Pagination
               page={parseInt(router.query.page as string || '1')}
               count={numberPages}
               defaultPage={1}
@@ -76,23 +77,7 @@ const WithStaticProps = ({ users, numberPages }: Props) => {
   );
   }
 
-export const getStaticProps: GetStaticProps = async () => {
-  const take = '4'
-  const totalUsers = await prisma2.ppl.findMany();
-  const usersArray = Object.keys(totalUsers).map((k) => totalUsers[k])
-  const numberPages = Math.ceil((usersArray?.length || 0) as number / +take) as number;
-  const { data } = await client.query({
-            query: AllUsersQuery,
-            variables: {
-              skip: '0',
-              take: take
-            }
-        })
-  return { props: {
-     users : data?.allUsers,
-     numberPages
-    } }
-}
+
 
 export default WithStaticProps
 
@@ -104,20 +89,41 @@ export interface MaterialUiLinkProps {
 export function MaterialUiLink({ item, query, ...props }: MaterialUiLinkProps) {
   return (
     <Link
-      href="/users/[page]"
-      as={`/users/${item.page}`}
+      href={
+        { // users?page=1
+          pathname: '/users',
+          query: {...query, page: item.page}
+        }
+      }
     >
       <a {...props}></a>
     </Link>
   );
 }
 
-// export const getStaticPaths:GetStaticPaths<{page:string}> = async () => {
-//   return {
-//     paths: [
-//       { params: { page: '1' } },
-       
-//     ],
-//     fallback: true
-//   };
-// } 
+export const getServerSideProps:GetServerSideProps = async (ctx) => {
+  const pageQuery = (ctx.query?.page || 1) as string;
+ctx.req
+  const take = '3';
+  const totalUsers = await prisma2.ppl.findMany();
+  const usersArray = Object.keys(totalUsers).map((k) => totalUsers[parseInt(k)])
+  const numberPages = Math.ceil((usersArray?.length || 0) as number / +take) as number;
+ 
+
+  const first = String((parseInt(pageQuery) -1) * (+take))
+  const { loading, data } = await client.query({
+            query: AllUsersQuery,
+            variables: {
+              skip: first,
+              take: take
+            }
+        })
+
+  return {
+    props: {
+      loading,
+      users: data?.allUsers,
+      numberPages
+    }
+  }
+}
