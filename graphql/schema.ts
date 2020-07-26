@@ -55,8 +55,27 @@ schema.queryType({
       },
     });
 
-    t.crud.ppl();
-    t.crud.ppls();
+    t.list.field("ppl", {
+      type: "Ppl",
+      args: { queryStr: schema.stringArg({nullable: true})},
+      resolve: async(_parent, _args, ctx) => {
+        try {
+          const ppl = await ctx.db.ppl.findMany({
+            where: {
+              OR: [
+                { id: _args?.queryStr! },
+                { username: _args?.queryStr! },
+              ],
+            },
+          });
+          // const product = t.crud.product(_args?.id!.toString() as ProductWhereUniqueInput);
+          return ppl;
+        } catch (error) {
+          throw  new Error(error)
+        }
+
+      }
+    });
 
     t.list.field("allProducts", {
       type: "Product",
