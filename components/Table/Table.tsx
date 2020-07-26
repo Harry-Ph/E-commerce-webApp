@@ -4,6 +4,7 @@ import { Ppl } from '../../interfaces'
 import Table from '@material-ui/core/Table'
 
 import { makeStyles, TableContainer, TableHead, TableRow, TableCell, TableBody } from '@material-ui/core'
+import Link from "next/link";
 
 type Props = {
     items: Ppl[]
@@ -34,12 +35,14 @@ console.log(items)
             </TableHead>
             <TableBody>
                 {items?.map((row) => (
-                <TableRow>
-                    <TableCell component="th" scope="row">{row.username}</TableCell>
-                    <TableCell align="right">{row.email}</TableCell>
-                    <TableCell align="right">{row.role}</TableCell>
-                    <TableCell align="right">{row.status ? 'Activated' : 'Deactivated'}</TableCell>
-                </TableRow>
+                  <Link href={`/users/detail?id=${row.id}`}>
+                    <TableRow>
+                      <TableCell component="th" scope="row">{row.username}</TableCell>
+                      <TableCell align="right">{row.email}</TableCell>
+                      <TableCell align="right">{row.role}</TableCell>
+                      <TableCell align="right">{row.status ? 'Activated' : 'Deactivated'}</TableCell>
+                    </TableRow>
+                  </Link>
                 ))}
             </TableBody>
         </Table>

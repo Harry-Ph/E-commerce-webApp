@@ -128,9 +128,8 @@ input ProductWhereUniqueInput {
 
 type Query {
   allProducts(skip: String, take: String): [Product!]
-  allUsers: [Ppl!]
-  ppl(where: PplWhereUniqueInput!): Ppl
-  ppls(after: PplWhereUniqueInput, before: PplWhereUniqueInput, first: Int, last: Int): [Ppl!]!
+  allUsers(skip: String, take: String): [Ppl!]
+  ppl(queryStr: String): [Ppl!]
   product(queryStr: String): [Product!]
 }
 
