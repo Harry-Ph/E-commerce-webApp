@@ -4,7 +4,7 @@ import { PaginationRenderItemParams } from '@material-ui/lab';
 import { Card, CardMedia, CardContent, Typography, CardActionArea, CardActions, Button } from '@material-ui/core'
 import {GetStaticPaths, GetStaticProps} from "next";
 import Loading from "../../components/Loading";
-import {gql} from "@apollo/client";
+import {gql, NetworkStatus} from "@apollo/client";
 import client from "../apollo";
 import {Product} from "../../interfaces";
 import Link from "next/link";
@@ -28,16 +28,30 @@ const ALL_PRODUCTS = gql`
 
 export interface IProducts {
   products: Product[]
-  numberPages: number
+  numberPages: number,
+  networkStatus: any
 }
 
-export default function Products({ products, numberPages }: IProducts) {
+export default function Products({ products, numberPages, networkStatus}: IProducts) {
   const classes = useStyles();
 
+  console.log('networkStatus component ...', networkStatus)
   const router = useRouter();
   if( router.isFallback || !products) {
     return <Loading/>
   }
+
+  // const { loading, error, data, refetch, networkStatus } = useQuery(
+  //   GET_DOG_PHOTO,
+  //   {
+  //     variables: { breed },
+  //     notifyOnNetworkStatusChange: true,
+  //   },
+  // );
+
+  // if(networkStatus === NetworkStatus.refetch) {
+  //   return <Loading/>
+  // }
 
   return (
     <div className={classes.wrapper}>
@@ -116,20 +130,22 @@ export const getStaticProps:GetStaticProps = async (ctx) => {
   const productsArray = Object.keys(totalProducts).map((k) => totalProducts[k])
   const numberPages = Math.ceil((productsArray?.length || 0) as number / +take) as number;
 
-  const {  data } = await client.query({
+  const {  loading, error, data, networkStatus } = await client.query({
     query: ALL_PRODUCTS,
     variables: {
       skip: '0',
       take: take
-    }
+    },
   })
 
+  console.log('networkStatus statis func ...', networkStatus)
   const products = Object.keys(data).map((k) => data[k])[0]
 
   return {
     props: {
       products,
-      numberPages
+      numberPages,
+      networkStatus
     },
   }
 }

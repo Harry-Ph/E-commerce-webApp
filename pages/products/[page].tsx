@@ -14,7 +14,6 @@ import PaginationItem from '@material-ui/lab/PaginationItem';
 import Skeleton from '@material-ui/lab/Skeleton';
 import Box from '@material-ui/core/Box';
 import { ParsedUrlQuery } from 'querystring';
-import { RuntimeError } from '../../.next/static/runtime/main';
 import { PrismaClient } from "@prisma/client"
 const prisma2 = new PrismaClient()
 

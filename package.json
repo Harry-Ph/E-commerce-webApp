@@ -16,11 +16,12 @@
         "@prisma/client": "^2.3.0",
         "@types/nprogress": "^0.2.0",
         "formik": "^2.1.5",
+        "formik-material-ui": "^2.0.1",
         "graphql": "^15.3.0",
         "graphql-tag": "^2.10.3",
         "isomorphic-unfetch": "^3.0.0",
-        "next": "latest",
-        "next-urql": "^1.0.1",
+        "next": "v9.4.5-canary.45",
+        "next-urql": "latest",
         "nexus": "^0.24.2",
         "nexus-plugin-prisma": "^0.10.0",
         "nexus-prisma": "^0.16.2",
@@ -29,7 +30,7 @@
         "react": "^16.12.0",
         "react-dom": "^16.12.0",
         "react-is": "^16.13.1",
-        "urql": "^1.9.8",
+        "urql": "latest",
         "yup": "^0.29.1"
     },
     "devDependencies": {

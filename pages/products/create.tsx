@@ -16,10 +16,42 @@ import React, { useState } from 'react';
 import {mixed, number, object, string} from 'yup';
 import FormGroup from "@material-ui/core/FormGroup";
 import { Select } from 'formik-material-ui';
+import {gql, useMutation} from "@apollo/client";
+
+import Router from "next/router";
 
 const sleep = (time) => new Promise((acc) => setTimeout(acc, time));
 
-export default function Home() {
+const DETAIL_PRODUCT = gql`
+    query product($queryStr: String!) {
+        product(queryStr: $queryStr) {
+            id
+            name
+        }
+    }
+`
+
+const CREATE_PRODUCT = gql`
+    mutation createNewOneProduct($name: String!) {
+        createNewOneProduct(name: $name) {
+            id
+            name
+        }
+    }
+`
+
+const ALL_PRODUCTS = gql`
+    query allProducts($skip: String!, $take: String!) {
+        allProducts(skip: $skip, take: $take) {
+            id
+            name
+        }
+    }
+`
+
+export default function CreateProduct() {
+  const [name, setName] = useState('');
+  const [addProduct] = useMutation(CREATE_PRODUCT);
   return (
     <Card>
       <CardContent>
@@ -34,6 +66,40 @@ export default function Home() {
           onSubmit={async (values) => {
             await sleep(2000);
             console.log('values', values);
+            await setName(values!.name)
+            // try {
+            //   const {data} = await client.query({
+            //     query: CREATE_PRODUCT,
+            //     variables: {
+            //       name: 'test hang'
+            //     }
+            //   })
+            //   // const {  data } = await client.query({
+            //   //   query: ALL_PRODUCTS,
+            //   //   variables: {
+            //   //     skip: 0,
+            //   //     take: 10
+            //   //   }
+            //   // })
+            //   console.log('dataaaa ne-> ', data)
+            // } catch (e) {
+            //   throw new Error(e)
+            //   console.log(e)
+            // }
+
+
+            // const {data} = await client.query({
+            //   query: CREATE_PRODUCT,
+            //   variables: {
+            //     name: 'test hang'
+            //   }
+            // })
+
+            const productData = await addProduct({  variables: {
+                name: values!.name
+              } });
+
+            await Router.push(`/products/details/${productData?.data!.createNewOneProduct.id}`);
           }}
         >
           <FormikStep

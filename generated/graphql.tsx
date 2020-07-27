@@ -19,23 +19,20 @@ export type Scalars = {
 export type Query = {
   __typename?: 'Query';
   allUsers?: Maybe<Array<Ppl>>;
-  ppl?: Maybe<Ppl>;
-  ppls: Array<Ppl>;
+  ppl?: Maybe<Array<Ppl>>;
   allProducts?: Maybe<Array<Product>>;
   product?: Maybe<Array<Product>>;
 };
 
 
-export type QueryPplArgs = {
-  where: PplWhereUniqueInput;
+export type QueryAllUsersArgs = {
+  skip?: Maybe<Scalars['String']>;
+  take?: Maybe<Scalars['String']>;
 };
 
 
-export type QueryPplsArgs = {
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  before?: Maybe<PplWhereUniqueInput>;
-  after?: Maybe<PplWhereUniqueInput>;
+export type QueryPplArgs = {
+  queryStr?: Maybe<Scalars['String']>;
 };
 
 
@@ -52,11 +49,11 @@ export type QueryProductArgs = {
 export type Ppl = {
   __typename?: 'Ppl';
   id: Scalars['String'];
-  name: Scalars['String'];
-};
-
-export type PplWhereUniqueInput = {
-  id?: Maybe<Scalars['String']>;
+  username: Scalars['String'];
+  email: Scalars['String'];
+  password: Scalars['String'];
+  role: Scalars['String'];
+  status: Scalars['Boolean'];
 };
 
 export type Product = {
@@ -73,7 +70,10 @@ export type Mutation = {
   deleteManyPpl: BatchPayload;
   updateOnePpl?: Maybe<Ppl>;
   updateManyPpl: BatchPayload;
-  productMutation?: Maybe<Scalars['String']>;
+  removeAllProducts?: Maybe<Scalars['String']>;
+  removeProductById?: Maybe<Product>;
+  updateProductById?: Maybe<Product>;
+  createNewOneProduct?: Maybe<Product>;
   createOneProduct: Product;
   deleteOneProduct?: Maybe<Product>;
   deleteManyProduct: BatchPayload;
@@ -109,6 +109,22 @@ export type MutationUpdateManyPplArgs = {
 };
 
 
+export type MutationRemoveProductByIdArgs = {
+  id?: Maybe<Scalars['ID']>;
+};
+
+
+export type MutationUpdateProductByIdArgs = {
+  id?: Maybe<Scalars['ID']>;
+  name?: Maybe<Scalars['String']>;
+};
+
+
+export type MutationCreateNewOneProductArgs = {
+  name?: Maybe<Scalars['String']>;
+};
+
+
 export type MutationCreateOneProductArgs = {
   data: ProductCreateInput;
 };
@@ -136,13 +152,26 @@ export type MutationUpdateManyProductArgs = {
 };
 
 export type PplCreateInput = {
+  email: Scalars['String'];
   id?: Maybe<Scalars['String']>;
-  name: Scalars['String'];
+  password: Scalars['String'];
+  role: Scalars['String'];
+  status?: Maybe<Scalars['Boolean']>;
+  username: Scalars['String'];
+};
+
+export type PplWhereUniqueInput = {
+  email?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['String']>;
 };
 
 export type PplWhereInput = {
+  email?: Maybe<StringFilter>;
   id?: Maybe<StringFilter>;
-  name?: Maybe<StringFilter>;
+  password?: Maybe<StringFilter>;
+  role?: Maybe<StringFilter>;
+  status?: Maybe<BooleanFilter>;
+  username?: Maybe<StringFilter>;
   AND?: Maybe<Array<PplWhereInput>>;
   OR?: Maybe<Array<PplWhereInput>>;
   NOT?: Maybe<Array<PplWhereInput>>;
@@ -162,19 +191,32 @@ export type StringFilter = {
   endsWith?: Maybe<Scalars['String']>;
 };
 
+export type BooleanFilter = {
+  equals?: Maybe<Scalars['Boolean']>;
+  not?: Maybe<Scalars['Boolean']>;
+};
+
 export type BatchPayload = {
   __typename?: 'BatchPayload';
   count: Scalars['Int'];
 };
 
 export type PplUpdateInput = {
+  email?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
+  password?: Maybe<Scalars['String']>;
+  role?: Maybe<Scalars['String']>;
+  status?: Maybe<Scalars['Boolean']>;
+  username?: Maybe<Scalars['String']>;
 };
 
 export type PplUpdateManyMutationInput = {
+  email?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
+  password?: Maybe<Scalars['String']>;
+  role?: Maybe<Scalars['String']>;
+  status?: Maybe<Scalars['Boolean']>;
+  username?: Maybe<Scalars['String']>;
 };
 
 export type ProductCreateInput = {
@@ -213,7 +255,7 @@ export type AllUsersQuery = (
   { __typename?: 'Query' }
   & { allUsers?: Maybe<Array<(
     { __typename?: 'Ppl' }
-    & Pick<Ppl, 'id' | 'name'>
+    & Pick<Ppl, 'id' | 'username' | 'email' | 'password' | 'role' | 'status'>
   )>> }
 );
 
@@ -233,7 +275,11 @@ export const AllUsersDocument = gql`
     query AllUsers {
   allUsers {
     id
-    name
+    username
+    email
+    password
+    role
+    status
   }
 }
     `;
