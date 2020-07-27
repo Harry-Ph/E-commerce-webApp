@@ -6,7 +6,6 @@ import {GetStaticPaths, GetStaticProps} from "next";
 import client from "../../apollo";
 import Loading from "../../../components/Loading";
 import {Product} from "../../../interfaces";
-import {typeAlias} from "@babel/types";
 
 const DETAIL_PRODUCT = gql`
     query product($queryStr: String!) {
