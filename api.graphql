@@ -52,7 +52,7 @@ type Ppl {
 
 input PplCreateInput {
   email: String!
-  id: String!
+  id: String
   password: String!
   role: String!
   status: Boolean
@@ -100,7 +100,7 @@ type Product {
 }
 
 input ProductCreateInput {
-  id: String!
+  id: String
   name: String!
 }
 

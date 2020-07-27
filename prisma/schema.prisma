@@ -9,7 +9,7 @@ datasource db {
 
 model Ppl {
   email    String  @unique
-  id       String  @id
+  id       String  @id @default(cuid())
   password String
   role     String
   status   Boolean @default(true)
@@ -17,6 +17,6 @@ model Ppl {
 }
 
 model Product {
-  id   String @id
+  id   String @id @default(cuid())
   name String
 }
