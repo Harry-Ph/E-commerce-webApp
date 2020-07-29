@@ -1,9 +1,9 @@
 import Link from 'next/link'
 import Layout from '../components/Layout'
-import {gql, useQuery} from '@apollo/client'
+import {gql, NetworkStatus, useQuery} from '@apollo/client'
 import useStyles from './products/style'
 import {Product} from "../interfaces";
-import client from "./apollo";
+import {initializeApollo} from "./apollo";
 import {Button, Card, CardActionArea, CardActions, CardContent, CardMedia, Typography} from "@material-ui/core";
 import React from "react";
 import Box from "@material-ui/core/Box";
@@ -21,7 +21,7 @@ export interface  IProducts {
     products: Product[]
 }
 // @ts-ignore
-export default function AboutPage({loading, data}) {
+export default function AboutPage({initialApolloState}) {
     const classes = useStyles();
     const devs = [
         {
@@ -49,6 +49,20 @@ export default function AboutPage({loading, data}) {
             github: 'https://github.com/ptdatkhtn'
         }
     ]
+    const result = useQuery(
+      ALL_PRODUCTS,
+      {
+          variables: {
+              skip: '0',
+              take: '3'
+          },
+          notifyOnNetworkStatusChange: true,
+      }
+    )
+    // const loadingMorePosts = networkStatus === NetworkStatus.fetchMore
+    // console.log(loadingMorePosts)
+    console.log('result', result)
+    console.log('initialApolloState', initialApolloState)
     return <Box className={classes.content__items}>
         {
             devs?.map((dev)=> (<Card className={classes.content__item}>
@@ -78,17 +92,22 @@ export default function AboutPage({loading, data}) {
     </Box>
 }
 
-// // @ts-ignore
-// export async function getServerSideProps(context) {
-//     // console.log('context--->', context.req)
-//     const { loading, data } = await client.query({
-//         query: ALL_PRODUCTS,
-//         variables: {
-//             skip: "0",
-//             take: "2"
-//         }
-//     })
-//     console.log('aaaaaaa--->', data)
-//     return {props: { loading, data }}
-// }
+export async function getStaticProps() {
+    const apolloClient = initializeApollo()
+    console.log(111111111111111111)
 
+    await apolloClient.query({
+        query: ALL_PRODUCTS,
+        variables: {
+            skip: '0',
+            take: '3'
+        },
+    })
+
+    return {
+        props: {
+            initialApolloState: apolloClient.cache.extract(),
+        },
+        // revalidate: 1,
+    }
+}

@@ -11,7 +11,7 @@ import { ThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import theme from '../theme';
 import {ApolloProvider} from "@apollo/client";
-import client from "./apollo";
+import {useApollo} from "./apollo";
 import Nprogress from 'nprogress';
 import 'nprogress/nprogress.css';
 
@@ -33,6 +33,8 @@ Router.events.on('routeChangeError', ()=> {
 })
 
 const App = ({ Component, pageProps }: AppProps) => {
+  console.log('pageProps', pageProps)
+  const apolloClient = useApollo(pageProps.initialApolloState)
     const classes = useStylesApp()
   React.useEffect(() => {
     // Remove the server-side injected CSS.
@@ -52,7 +54,7 @@ const App = ({ Component, pageProps }: AppProps) => {
         <CssBaseline />
         <NavBar/>
           <div className={classes.contentApp}>
-            <ApolloProvider client={client}>
+            <ApolloProvider client={apolloClient}>
               <Component {...pageProps} />
             </ApolloProvider>
           </div>
