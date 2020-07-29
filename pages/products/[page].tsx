@@ -5,7 +5,7 @@ import { Card, CardMedia, CardContent, Typography, CardActionArea, CardActions, 
 import {GetStaticPaths, GetStaticProps} from "next";
 import Loading from "../../components/Loading";
 import {gql} from "@apollo/client";
-import client from "../apollo";
+import {initializeApollo} from "../apollo";
 import {Product} from "../../interfaces";
 import Link from "next/link";
 import {useRouter} from "next/router";
@@ -122,8 +122,8 @@ export const getStaticProps:GetStaticProps = async (ctx) => {
   const pageQuery = (ctx?.params?.page || 1) as string;
 
   const first = String((parseInt(pageQuery) -1) * (+take))
-
-  const {  data } = await client.query({
+  const apolloClient = initializeApollo()
+  const {  data } = await apolloClient.query({
     query: ALL_PRODUCTS,
     variables: {
       skip: first,

@@ -4,8 +4,8 @@ import { PaginationRenderItemParams } from '@material-ui/lab';
 import { Card, CardMedia, CardContent, Typography, CardActionArea, CardActions, Button } from '@material-ui/core'
 import {GetStaticPaths, GetStaticProps} from "next";
 import Loading from "../../components/Loading";
-import {gql, NetworkStatus} from "@apollo/client";
-import client from "../apollo";
+import {gql, NetworkStatus, useQuery} from "@apollo/client";
+import {initializeApollo} from "../apollo";
 import {Product} from "../../interfaces";
 import Link from "next/link";
 import {useRouter} from "next/router";
@@ -35,6 +35,18 @@ export interface IProducts {
 export default function Products({ products, numberPages, networkStatus}: IProducts) {
   const classes = useStyles();
 
+  const result = useQuery(
+    ALL_PRODUCTS,
+    {
+      variables: {
+        skip: '0',
+        take: '3'
+      },
+      notifyOnNetworkStatusChange: true,
+    }
+  )
+
+  console.log('result', result)
   console.log('networkStatus component ...', networkStatus)
   const router = useRouter();
   if( router.isFallback || !products) {
@@ -129,8 +141,8 @@ export const getStaticProps:GetStaticProps = async (ctx) => {
   const totalProducts = await prisma2.product.findMany();
   const productsArray = Object.keys(totalProducts).map((k) => totalProducts[k])
   const numberPages = Math.ceil((productsArray?.length || 0) as number / +take) as number;
-
-  const {  loading, error, data, networkStatus } = await client.query({
+  const apolloClient = initializeApollo()
+  const {  loading, error, data, networkStatus } = await apolloClient.query({
     query: ALL_PRODUCTS,
     variables: {
       skip: '0',
