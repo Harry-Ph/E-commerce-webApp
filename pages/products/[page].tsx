@@ -15,7 +15,11 @@ import Skeleton from '@material-ui/lab/Skeleton';
 import Box from '@material-ui/core/Box';
 import { ParsedUrlQuery } from 'querystring';
 import { PrismaClient } from "@prisma/client"
+import {request} from "graphql-request";
+import useSWR from 'swr'
 const prisma2 = new PrismaClient()
+
+const take = '3';
 
 const ALL_PRODUCTS = gql`
     query allProducts($skip: String!, $take: String!) {
@@ -26,21 +30,36 @@ const ALL_PRODUCTS = gql`
     }
 `
 
+const ALL_PRODUCTS2 = /* GraphQL */`
+    query allProducts($skip: String!, $take: String!) {
+        allProducts(skip: $skip, take: $take) {
+            id
+            name
+        }
+    }
+`;
+
+const API = 'http://localhost:3000/api/graphql'
+const fetcher = (query: any, first: string, take: string) => request('http://localhost:3000/api/graphql', query, {first, take});
+
 export interface IProducts {
   products: Product[]
   numberPages: number,
-  data: any
+  first: string
 }
 
-export default function Products({ products, data, numberPages }: IProducts) {
+export default function Products() {
   const classes = useStyles();
-
-  console.log('products1', products)
-  console.log('data2', data)
+  const {data} = useSWR([ALL_PRODUCTS2, '0', '3'], fetcher)
+  const loading: boolean = !data;
+  // console.log('products1', products)
+  const numberPages = 10;
+  console.log('data', data)
   const router = useRouter();
-  // if( router.isFallback || !products) {
-  //   return <Loading/>
-  // }
+  const products = data;
+  if( router.isFallback || loading) {
+    return <Loading/>
+  }
 
   return (
     <div className={classes.wrapper}>
@@ -114,8 +133,6 @@ export default function Products({ products, data, numberPages }: IProducts) {
 }
 
 export const getStaticProps:GetStaticProps = async (ctx) => {
-  const take = '3';
-
   const totalProducts = await prisma2.product.findMany();
   const productsArray = Object.keys(totalProducts).map((k) => totalProducts[parseInt(k)])
   const numberPages = Math.ceil((productsArray?.length || 0) as number / +take) as number;
@@ -131,13 +148,15 @@ export const getStaticProps:GetStaticProps = async (ctx) => {
     }
   })
 
+  const products2 = await fetcher(API, first, take);
+console.log(products)
   const products = Object.keys(data).map((k) => data[k])[0]
 console.log(' server build...', data)
   return {
     props: {
       products,
-      data,
-      numberPages
+      numberPages,
+      first
     },
   }
 }
