@@ -21,6 +21,9 @@ const prisma2 = new PrismaClient()
 
 const take = '3';
 
+const API = 'http://localhost:3000/api/graphql'
+const fetcher = (query: any, skip: string, take: string) => request(API, query, {skip, take});
+
 const ALL_PRODUCTS = gql`
     query allProducts($skip: String!, $take: String!) {
         allProducts(skip: $skip, take: $take) {
@@ -39,28 +42,25 @@ const ALL_PRODUCTS2 = /* GraphQL */`
     }
 `;
 
-const API = 'http://localhost:3000/api/graphql'
-const fetcher = (query: any, first: string, take: string) => request('http://localhost:3000/api/graphql', query, {first, take});
 
 export interface IProducts {
   products: Product[]
   numberPages: number,
-  first: string
+  skip: string
 }
 
-export default function Products() {
+export default function Products({ skip, products, numberPages}: IProducts) {
   const classes = useStyles();
-  const {data} = useSWR([ALL_PRODUCTS2, '0', '3'], fetcher)
+  const {data} = useSWR([ALL_PRODUCTS2, skip, take], { initialData: products})
   const loading: boolean = !data;
   // console.log('products1', products)
-  const numberPages = 10;
-  console.log('data', data)
+  console.log('data......---', data)
   const router = useRouter();
-  const products = data;
   if( router.isFallback || loading) {
     return <Loading/>
   }
 
+  const productArray = Object.keys(data).map((k) => data[k])[0]
   return (
     <div className={classes.wrapper}>
       <div className={classes.content__tittle}>
@@ -87,7 +87,7 @@ export default function Products() {
       <div className={classes.content__items}>
         {
           ((products && products.length > 0) || !router.isFallback) ?
-            (products?.map(p=> (
+            (productArray?.map(p=> (
               <Link href="/products/details/[id]" as={`/products/details/${p.id}`}>
                 <Card className={classes.content__item}>
                   <CardActionArea>
@@ -138,25 +138,25 @@ export const getStaticProps:GetStaticProps = async (ctx) => {
   const numberPages = Math.ceil((productsArray?.length || 0) as number / +take) as number;
   const pageQuery = (ctx?.params?.page || 1) as string;
 
-  const first = String((parseInt(pageQuery) -1) * (+take))
+  const skip = String((parseInt(pageQuery) -1) * (+take))
 
-  const {  data } = await client.query({
-    query: ALL_PRODUCTS,
-    variables: {
-      skip: first,
-      take: take
-    }
-  })
+  // const {  data } = await client.query({
+  //   query: ALL_PRODUCTS,
+  //   variables: {
+  //     skip: skip,
+  //     take: take
+  //   }
+  // })
 
-  const products2 = await fetcher(API, first, take);
-console.log(products)
-  const products = Object.keys(data).map((k) => data[k])[0]
-console.log(' server build...', data)
+  const products = await fetcher(ALL_PRODUCTS2, skip, take);
+console.log('products2', products)
+  // const products = Object.keys(data).map((k) => data[k])[0]
+// console.log(' server build...', data)
   return {
     props: {
       products,
       numberPages,
-      first
+      skip
     },
   }
 }

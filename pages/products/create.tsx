@@ -17,8 +17,10 @@ import {mixed, number, object, string} from 'yup';
 import FormGroup from "@material-ui/core/FormGroup";
 import { Select } from 'formik-material-ui';
 import {gql, useMutation} from "@apollo/client";
-
+import {request} from "graphql-request";
+import useSWR , {trigger, mutate }from 'swr'
 import Router from "next/router";
+const API = 'http://localhost:3000/api/graphql'
 
 const sleep = (time) => new Promise((acc) => setTimeout(acc, time));
 
@@ -40,6 +42,16 @@ const CREATE_PRODUCT = gql`
     }
 `
 
+/* GraphQL */
+const CREATE_PRODUCT2 = /* GraphQL */`
+    mutation createNewOneProduct($name: String!) {
+        createNewOneProduct(name: $name) {
+            id
+            name
+        }
+    }
+`
+
 const ALL_PRODUCTS = gql`
     query allProducts($skip: String!, $take: String!) {
         allProducts(skip: $skip, take: $take) {
@@ -51,7 +63,11 @@ const ALL_PRODUCTS = gql`
 
 export default function CreateProduct() {
   const [name, setName] = useState('');
-  const [addProduct] = useMutation(CREATE_PRODUCT);
+  // const [addProduct] = useMutation(CREATE_PRODUCT);
+
+  // the mutate function will do the refetching for us
+  // const { mutate } = useSWR(CREATE_PRODUCT2);
+
   return (
     <Card>
       <CardContent>
@@ -95,11 +111,17 @@ export default function CreateProduct() {
             //   }
             // })
 
-            const productData = await addProduct({  variables: {
-                name: values!.name
-              } });
+            // call mutate here to refetch the new product after clicking
+            mutate(API);
+            const {createNewOneProduct} = await request(API, CREATE_PRODUCT2, {name: values!.name})
+            console.log('data check', createNewOneProduct)
+            trigger(API);
 
-            await Router.push(`/products/details/${productData?.data!.createNewOneProduct.id}`);
+            // const productData = await addProduct({  variables: {
+            //     name: values!.name
+            //   } });
+
+            await Router.push(`/products/details/${createNewOneProduct!.id}`);
           }}
         >
           <FormikStep
