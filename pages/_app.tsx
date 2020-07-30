@@ -6,7 +6,7 @@ import NavBar from '../components/NavBar/NavBar'
 import Footer from '../components/Footer/Footer'
 import {Router} from 'next/dist/client/router'
 import Head from 'next/head';
-
+import useSWR, { SWRConfig } from 'swr'
 import { ThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import theme from '../theme';
@@ -16,9 +16,13 @@ import Nprogress from 'nprogress';
 import 'nprogress/nprogress.css';
 
 import {useStylesApp} from './style'
+import {request} from "graphql-request";
 
 // the URL to /api/graphql
 export const GRAPHQL_ENDPOINT = `http://localhost:3000/api/graphql`;
+
+const API = 'http://localhost:3000/api/graphql'
+const fetcher = (query: any, skip: string, take: string) => request(API, query, {skip, take});
 
 Router.events.on('routeChangeStart', ()=> {
     Nprogress.start()
@@ -52,9 +56,15 @@ const App = ({ Component, pageProps }: AppProps) => {
         <CssBaseline />
         <NavBar/>
           <div className={classes.contentApp}>
-            <ApolloProvider client={client}>
+            <SWRConfig
+              value={{
+                refreshInterval: 8000,
+                dedupingInterval: 5000,
+                fetcher: fetcher
+              }}
+            >
               <Component {...pageProps} />
-            </ApolloProvider>
+            </SWRConfig>
           </div>
         <Footer />
       </ThemeProvider>

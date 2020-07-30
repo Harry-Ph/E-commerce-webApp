@@ -29,8 +29,6 @@ type Props = {
   errors?: string
 }
 
-
-
 const StaticPropsDetail = ({ item, errors }: Props) => {
   console.log('112asdasd',item?.username)
   if (errors) {
