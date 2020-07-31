@@ -1,22 +1,27 @@
-import {createStyles} from "@material-ui/core";
-import {makeStyles} from "@material-ui/styles";
+import {createStyles, Theme, makeStyles} from "@material-ui/core";
+// import {makeStyles} from "@material-ui/styles";
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
-            display: 'grid',
-            gridTemplateColumns: '60% 40%',
+            marginTop: '50px'
         },
-        img: {
-            maxWidth: '800px',
-            minHeight: '600px',
-            backgroundSize: 'contain',
-            imageRendering: 'pixelated'
+        item__img: {
+            padding: '5px'
         },
-        details: {
-            padding: '0 40px',
+        grid__img: {
+            margin: "0px 60px 10px 80px",
+        },
+        buttons: {
+            padding: '20px',
+        },
+        content__subheading: {
+            margin: '20px 0'
+        },
+        content__description: {
+            margin: '10px 0'
         }
+
     })
 );
-
 export default useStyles
