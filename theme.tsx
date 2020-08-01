@@ -1,4 +1,5 @@
 import { createMuiTheme } from "@material-ui/core/styles";
+import {elementType} from "prop-types";
 
 // Create a theme instance.
 export const theme = createMuiTheme({
@@ -32,6 +33,9 @@ export const theme = createMuiTheme({
         textOverflow: 'ellipsis',
         overflow: 'hidden !important',
         maxHeight: '200px'
+      },
+      colorTextSecondary: {
+        color: 'red'
       }
     },
     MuiCardMedia : {
@@ -60,7 +64,13 @@ export const theme = createMuiTheme({
         padding: "20px"
       },
       fullWidth: {
-        maxWidth: "300px"
+        maxWidth: "300px",
+        marginTop: '1.5rem'
+      }
+    },
+    MuiOutlinedInput: {
+      root: {
+        maxWidth: '250px'
       }
     }
   },
@@ -84,7 +94,7 @@ export const theme = createMuiTheme({
     },
     MuiCard: {
       elevation: 12
-    }
+    },
   }
 });
 
