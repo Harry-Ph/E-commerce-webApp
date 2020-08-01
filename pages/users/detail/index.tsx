@@ -9,6 +9,12 @@ import {AllUsersQuery} from "../index";
 import {gql} from "@apollo/client";
 import {useRouter} from "next/router";
 
+import useStyles from "./style";
+
+
+import {CardMedia, Typography, Box, Grid} from "@material-ui/core";
+
+
 const DETAIL_USER = gql`
     query ppl($queryStr: String!) {
         ppl(queryStr: $queryStr) {
@@ -34,10 +40,42 @@ const StaticPropsDetail = ({ item, errors }: Props) => {
       </Layout>
     )
   }
+    const classes = useStyles();
 
   return (
+
     <Layout>
-      {item?.username}
+      {/*{item?.username}*/}
+      <Box component={"div"}>
+          <Grid container spacing={3}>
+              <Grid item xs={6}>
+                  <CardMedia
+                      component="img"
+                      src={"https://www.kotaku.com.au/content/uploads/sites/3/2020/04/hunter-x-hunter-crunchyroll-1.jpg"}
+                  />
+              </Grid>
+              <Grid item xs={6}>
+          <Typography variant="h5" component="h2" gutterBottom className={classes.text}>
+              Name : Bui Nguyen Khoa
+          </Typography>
+          <Typography variant="h5" component="h2" gutterBottom className={classes.text}>
+              Role : Sat thu
+          </Typography>
+          <Typography variant="h5" component="h2" gutterBottom className={classes.text}>
+              Address: 216/1 dien bien phu
+          </Typography>
+          <Typography variant="h5" component="h2" gutterBottom className={classes.text}>
+              Phone number: 0918393035
+          </Typography>
+          <Typography variant ="body1" gutterBottom>
+             I am Bui Nguyen Khoa, I come from VietNam, Vietnam is my homecountry Where I was born at there
+          </Typography>
+              </Grid>
+          </Grid>
+
+
+    </Box>
+
     </Layout>
   )
 }
