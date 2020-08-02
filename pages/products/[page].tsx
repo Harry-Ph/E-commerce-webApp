@@ -15,7 +15,14 @@ import Skeleton from '@material-ui/lab/Skeleton';
 import Box from '@material-ui/core/Box';
 import { ParsedUrlQuery } from 'querystring';
 import { PrismaClient } from "@prisma/client"
+import {request} from "graphql-request";
+import useSWR from 'swr'
 const prisma2 = new PrismaClient()
+
+const take = '3';
+
+const API = 'http://localhost:3000/api/graphql'
+const fetcher = (query: any, skip: string, take: string) => request(API, query, {skip, take});
 
 const ALL_PRODUCTS = gql`
     query allProducts($skip: String!, $take: String!) {
@@ -26,22 +33,34 @@ const ALL_PRODUCTS = gql`
     }
 `
 
+const ALL_PRODUCTS2 = /* GraphQL */`
+    query allProducts($skip: String!, $take: String!) {
+        allProducts(skip: $skip, take: $take) {
+            id
+            name
+        }
+    }
+`;
+
+
 export interface IProducts {
   products: Product[]
   numberPages: number,
-  data: any
+  skip: string
 }
 
-export default function Products({ products, data, numberPages }: IProducts) {
+export default function Products({ skip, products, numberPages}: IProducts) {
   const classes = useStyles();
-
-  console.log('products1', products)
-  console.log('data2', data)
+  const {data} = useSWR([ALL_PRODUCTS2, skip, take], { initialData: products})
+  const loading: boolean = !data;
+  // console.log('products1', products)
+  console.log('data......---', data)
   const router = useRouter();
-  // if( router.isFallback || !products) {
-  //   return <Loading/>
-  // }
+  if( router.isFallback || loading) {
+    return <Loading/>
+  }
 
+  const productArray = Object.keys(data).map((k) => data[k])[0]
   return (
     <div className={classes.wrapper}>
       <div className={classes.content__tittle}>
@@ -68,7 +87,7 @@ export default function Products({ products, data, numberPages }: IProducts) {
       <div className={classes.content__items}>
         {
           ((products && products.length > 0) || !router.isFallback) ?
-            (products?.map(p=> (
+            (productArray?.map(p=> (
               <Link href="/products/details/[id]" as={`/products/details/${p.id}`}>
                 <Card className={classes.content__item}>
                   <CardActionArea>
@@ -114,30 +133,30 @@ export default function Products({ products, data, numberPages }: IProducts) {
 }
 
 export const getStaticProps:GetStaticProps = async (ctx) => {
-  const take = '3';
-
   const totalProducts = await prisma2.product.findMany();
   const productsArray = Object.keys(totalProducts).map((k) => totalProducts[parseInt(k)])
   const numberPages = Math.ceil((productsArray?.length || 0) as number / +take) as number;
   const pageQuery = (ctx?.params?.page || 1) as string;
 
-  const first = String((parseInt(pageQuery) -1) * (+take))
+  const skip = String((parseInt(pageQuery) -1) * (+take))
 
-  const {  data } = await client.query({
-    query: ALL_PRODUCTS,
-    variables: {
-      skip: first,
-      take: take
-    }
-  })
+  // const {  data } = await client.query({
+  //   query: ALL_PRODUCTS,
+  //   variables: {
+  //     skip: skip,
+  //     take: take
+  //   }
+  // })
 
-  const products = Object.keys(data).map((k) => data[k])[0]
-console.log(' server build...', data)
+  const products = await fetcher(ALL_PRODUCTS2, skip, take);
+console.log('products2', products)
+  // const products = Object.keys(data).map((k) => data[k])[0]
+// console.log(' server build...', data)
   return {
     props: {
       products,
-      data,
-      numberPages
+      numberPages,
+      skip
     },
   }
 }
