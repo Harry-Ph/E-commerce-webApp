@@ -3,12 +3,11 @@ import {Button, Card, CardActions, CardContent, CardMedia, Typography, Box, Card
 import FavoriteBorderOutlinedIcon from '@material-ui/icons/FavoriteBorderOutlined';
 import useStyles from './style'
 import { gql } from '@apollo/client'
-import {GetStaticPaths, GetStaticProps, GetServerSideProps } from "next";
+import {GetServerSideProps } from "next";
 import client from "../../apollo";
 import Loading from "../../../components/Loading";
 import {Product} from "../../../interfaces";
-import EuroIcon from '@material-ui/icons/Euro';
-import {async} from "q";
+
 
 const DETAIL_PRODUCT = gql`
     query product($queryStr: String!) {
@@ -28,9 +27,6 @@ const ALL_PRODUCTS = gql`
 `
 
 export interface IProduct {
-    // product: {
-    //     product: Product[]
-    // }
     loading: boolean,
     product: {
         product: Product[]
@@ -68,8 +64,8 @@ const sizes = [
     }
 ]
 
-export default function ProductDetails ({product, loading}: IProduct) {
-    if( !loading) {
+export default function ProductDetails ({loading, product}: IProduct) {
+    if(loading) {
         return <Loading/>
     }
 
@@ -99,8 +95,7 @@ export default function ProductDetails ({product, loading}: IProduct) {
                     <Box component="div">
                         <CardContent>
                             <Typography component="h1" variant="h3">
-                                {/*{product?.product[0]!.name}*/}
-                                {product?.product[0]!.name}
+                                {product?.product[0].name}
                             </Typography>
                             <Typography variant="subtitle1" color="textSecondary">
                                 €60.0
@@ -198,55 +193,20 @@ export default function ProductDetails ({product, loading}: IProduct) {
 
     );
 }
-
-// export const getStaticProps:GetStaticProps = async (ctx) => {
-//     console.log('ctx?.params?.id', ctx?.params?.id )
-//     const {data } = await client.query({
-//         query: DETAIL_PRODUCT,
-//         variables: {queryStr: ctx?.params?.id}
-//     })
-//     console.log('data-->', data)
-//
-//     return {
-//         props: {
-//             product: data!
-//         },
-//     }
-// }
-
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-    const {data} = await client.query({
-        query: DETAIL_PRODUCT,
-        variables: {queryStr: ctx?.params?.id}
-    })
-    console.log('aaaa----->', data)
-    return {
-        props: {
-            product: data!,
-            loading: true
+        const {data, loading} = await client.query({
+            query: DETAIL_PRODUCT,
+            variables: {queryStr: ctx?.params?.id}
+        })
+        console.log('aaaa----->', data)
+        return {
+            props: {
+                product: data!,
+                loading: loading
 
-        },
+            },
+        }
     }
-}
 
-// export const getStaticPaths:GetStaticPaths<{id:string}> = async () => {
-//     const take = '2';
-//     const {  data } = await client.query({
-//         query: ALL_PRODUCTS,
-//         variables: {
-//             skip: "0",
-//             take: take
-//         }
-//     })
-//
-//     let arr = Object.keys(data).map((k) => data[k])[0]
-//
-//     const paths = arr.slice(0, +take).map((p)=> {
-//         return {params: {id: p.id}}
-//     })
-//     console.log('arr...-=', paths)
-//     return {
-//         fallback: true,
-//         paths
-//     }
-// }
+
+
