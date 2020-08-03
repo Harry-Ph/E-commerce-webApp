@@ -57,19 +57,25 @@ export default function Products({ products, numberPages, networkStatus}: IProdu
   // }
 
   //modal function
-  const [open, setOpen] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
 
 
 
 
-  const handleOpen = (e: any) => {
+  const handleOpenDelete = (e: any) => {
     e.preventDefault();
-    setOpen(true);
+    setOpenDelete(true);
   };
 
-  const handleClose =  (e: any) => {
+  const handleCloseDelete =  (e: any) => {
     e.preventDefault();
-    setOpen(false);
+    setOpenDelete(false);
+  };
+
+  const handleOpenOrCloseEdit = (e: any) => {
+    e.preventDefault();
+    setOpenEdit(!openEdit);
   };
 
 
@@ -100,49 +106,61 @@ export default function Products({ products, numberPages, networkStatus}: IProdu
         {
           ((products && products.length > 0) || !router.isFallback) ?
             (products?.map(p=> (
-              <Link href="/products/details/[id]" as={`/products/details/${p.id}`}>
-                <Card className={classes.content__item}>
-                  <CardActionArea>
-                    <CardMedia className={classes.item__media}
-                               image="https://cdn.bike24.net/i/mb/d8/fa/b2/277893-00-d-557791.jpg"
-                               title="Contemplative Reptile"
-                    />
-                    <CardContent>
-                      <Typography gutterBottom variant="h5" component="h2">
-                        {p?.name}
-                      </Typography>
-                      <Typography variant="body2" color="textSecondary" component="p">
-                        Maximum impact cushioning. The brutal, repetitive,
-                        downward force of sport can wreak havoc on the body and on performance.
-                        Max Air cushioning is specifically engineered to handle these impacts and provide protection.
-                        Max Air is big air designed to take a pounding.
-                      </Typography>
-                      <Typography className={classes.item__price} >PRICE: 60.0 Euro</Typography>
-                    </CardContent>
-                  </CardActionArea>
-                  <CardActions className={classes.item__buttons}>
-                    <Box component="div">
-                      <Button size="small" color="primary"  className={classes.button__addToCart}>
-                        Add To Cart
-                      </Button>
-                      <Button size="small" color="primary">
-                        Learn More
-                      </Button>
-                    </Box>
-                    <Button size="small" color="primary" onClick={handleOpen}>
-                      Delete
-                    </Button>
-                  </CardActions>
-                  {open? (<Modal
-                          handleClose={handleClose}
-                          handleOpen={handleOpen}
-                          open={open}
+                <>
+                  <Link href="/products/details/[id]" as={`/products/details/${p.id}`}>
+                    <Card className={classes.content__item}>
+                      <CardActionArea>
+                        <CardMedia className={classes.item__media}
+                                   image="https://cdn.bike24.net/i/mb/d8/fa/b2/277893-00-d-557791.jpg"
+                                   title="Contemplative Reptile"
+                        />
+                        <CardContent>
+                          <Typography gutterBottom variant="h5" component="h2">
+                            {p?.name}
+                          </Typography>
+                          <Typography variant="body2" color="textSecondary" component="p">
+                            Maximum impact cushioning. The brutal, repetitive,
+                            downward force of sport can wreak havoc on the body and on performance.
+                            Max Air cushioning is specifically engineered to handle these impacts and provide protection.
+                            Max Air is big air designed to take a pounding.
+                          </Typography>
+                          <Typography className={classes.item__price} >PRICE: 60.0 Euro</Typography>
+                        </CardContent>
+                      </CardActionArea>
+                      <CardActions className={classes.item__buttons}>
+                        <Box component="div">
+                          <Button size="small" color="primary"  className={classes.button__addToCart}>
+                            Add To Cart
+                          </Button>
+                          <Button size="small" color="primary" onClick={handleOpenOrCloseEdit}>
+                            Edit
+                          </Button>
+                        </Box>
+                        <Button size="small" color="primary" onClick={handleOpenDelete}>
+                          Delete
+                        </Button>
+                      </CardActions>
+                      {openDelete? (<Modal
+                              handleClose={handleCloseDelete}
+                              handleOpen={handleOpenDelete}
+                              open={openDelete}
+                              isEdit={false}
+                          />)
+                          :null
+                      }
+
+                    </Card>
+                  </Link>
+
+                  {openEdit? (<Modal
+                          handleClose={handleOpenOrCloseEdit}
+                          handleOpen={handleOpenOrCloseEdit}
+                          open={openEdit}
+                          isEdit={true}
                       />)
                       :null
                   }
-                </Card>
-              </Link>
-
+                </>
             ))) :
             <Box className={classes.content__skeleton}>
               <Skeleton variant="rect" width={'28vw'} height={'600px'} />
