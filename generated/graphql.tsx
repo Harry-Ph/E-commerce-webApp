@@ -110,7 +110,7 @@ export type MutationUpdateManyPplArgs = {
 
 
 export type MutationRemoveProductByIdArgs = {
-  id?: Maybe<Scalars['ID']>;
+  id?: Maybe<Scalars['String']>;
 };
 
 

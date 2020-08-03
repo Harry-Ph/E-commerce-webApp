@@ -62,7 +62,6 @@ const ALL_PRODUCTS = gql`
 `
 
 export default function CreateProduct() {
-  const [name, setName] = useState('');
   // const [addProduct] = useMutation(CREATE_PRODUCT);
 
   // the mutate function will do the refetching for us
@@ -82,7 +81,6 @@ export default function CreateProduct() {
           onSubmit={async (values) => {
             await sleep(2000);
             console.log('values', values);
-            await setName(values!.name)
             // try {
             //   const {data} = await client.query({
             //     query: CREATE_PRODUCT,
@@ -112,10 +110,10 @@ export default function CreateProduct() {
             // })
 
             // call mutate here to refetch the new product after clicking
-            mutate(API);
+            await mutate(API);
             const {createNewOneProduct} = await request(API, CREATE_PRODUCT2, {name: values!.name})
             console.log('data check', createNewOneProduct)
-            trigger(API);
+            await trigger(API);
 
             // const productData = await addProduct({  variables: {
             //     name: values!.name

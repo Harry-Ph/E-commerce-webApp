@@ -33,7 +33,7 @@ type Mutation {
   deleteOnePpl(where: PplWhereUniqueInput!): Ppl
   deleteOneProduct(where: ProductWhereUniqueInput!): Product
   removeAllProducts: String
-  removeProductById(id: ID): Product
+  removeProductById(id: String): Product
   updateManyPpl(data: PplUpdateManyMutationInput!, where: PplWhereInput): BatchPayload!
   updateManyProduct(data: ProductUpdateManyMutationInput!, where: ProductWhereInput): BatchPayload!
   updateOnePpl(data: PplUpdateInput!, where: PplWhereUniqueInput!): Ppl

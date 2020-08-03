@@ -165,7 +165,7 @@ schema.mutationType({
       type: 'Product',
       nullable: true,
       args: {
-        id: idArg(),
+        id: stringArg(),
       },
       resolve(parent, {id}, ctx) {
         try {
