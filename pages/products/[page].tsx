@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import useStyles from './style'
 import { PaginationRenderItemParams } from '@material-ui/lab';
 import { Card, CardMedia, CardContent, Typography, CardActionArea, CardActions, Button } from '@material-ui/core'
@@ -18,11 +18,13 @@ import { PrismaClient } from "@prisma/client"
 import {request} from "graphql-request";
 import useSWR from 'swr'
 const prisma2 = new PrismaClient()
+import Modal from '../../components/Modal';
 
 const take = '3';
 
 const API = 'http://localhost:3000/api/graphql'
 const fetcher = (query: any, skip: string, take: string) => request(API, query, {skip, take});
+
 
 const ALL_PRODUCTS = gql`
     query allProducts($skip: String!, $take: String!) {
@@ -43,6 +45,7 @@ const ALL_PRODUCTS2 = /* GraphQL */`
 `;
 
 
+
 export interface IProducts {
   products: Product[]
   numberPages: number,
@@ -55,10 +58,27 @@ export default function Products({ skip, products, numberPages}: IProducts) {
   const loading: boolean = !data;
   // console.log('products1', products)
   console.log('data......---', data)
+
+
+
   const router = useRouter();
   if( router.isFallback || loading) {
     return <Loading/>
   }
+
+  //modal function
+  const [open, setOpen] = useState(false);
+
+  const handleOpen = (e: any) => {
+    e.preventDefault();
+    setOpen(true);
+  };
+
+  const handleClose =  (e: any) => {
+    e.preventDefault();
+    setOpen(false);
+  };
+
 
   const productArray = Object.keys(data).map((k) => data[k])[0]
   return (
@@ -108,17 +128,28 @@ export default function Products({ skip, products, numberPages}: IProducts) {
                       <Typography className={classes.item__price} >PRICE: 60.0 Euro</Typography>
                     </CardContent>
                   </CardActionArea>
-                  <CardActions>
-                    <Button size="small" color="primary">
-                      Add To Cart
-                    </Button>
-                    <Button size="small" color="primary">
-                      Learn More
-                    </Button>
+                  <CardActions className={classes.item__buttons}>
+                      <Box component="div">
+                        <Button size="small" color="primary"  className={classes.button__addToCart}>
+                          Add To Cart
+                        </Button>
+                        <Button size="small" color="primary">
+                          Learn More
+                        </Button>
+                      </Box>
+                      <Button size="small" color="primary" onClick={handleOpen}>
+                        Delete
+                      </Button>
                   </CardActions>
+                  {open? (<Modal
+                          handleClose={handleClose}
+                          handleOpen={handleOpen}
+                          open={open}
+                      />)
+                      :null
+                  }
                 </Card>
               </Link>
-
             ))) :
             <Box className={classes.content__skeleton}>
               <Skeleton variant="rect" width={'28vw'} height={'720px'} />
@@ -128,6 +159,7 @@ export default function Products({ skip, products, numberPages}: IProducts) {
             </Box>
         }
       </div>
+
     </div>
   )
 }
@@ -152,6 +184,8 @@ export const getStaticProps:GetStaticProps = async (ctx) => {
 console.log('products2', products)
   // const products = Object.keys(data).map((k) => data[k])[0]
 // console.log(' server build...', data)
+//   const deleteItem = await fetcher(REMOVE_PRODUCT_BY_ID, skip, take);
+// console.log('deleteItem:', deleteItem);
   return {
     props: {
       products,

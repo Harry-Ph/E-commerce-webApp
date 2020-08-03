@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import useStyles from './style'
 import { PaginationRenderItemParams } from '@material-ui/lab';
 import { Card, CardMedia, CardContent, Typography, CardActionArea, CardActions, Button } from '@material-ui/core'
@@ -16,7 +16,10 @@ import { PrismaClient } from "@prisma/client"
 import Skeleton from "@material-ui/lab/Skeleton";
 import Box from "@material-ui/core/Box";
 const prisma2 = new PrismaClient()
+import Modal from "../../components/Modal";
 
+
+;
 const ALL_PRODUCTS = gql`
     query allProducts($skip: String!, $take: String!) {
         allProducts(skip: $skip, take: $take) {
@@ -52,6 +55,23 @@ export default function Products({ products, numberPages, networkStatus}: IProdu
   // if(networkStatus === NetworkStatus.refetch) {
   //   return <Loading/>
   // }
+
+  //modal function
+  const [open, setOpen] = useState(false);
+
+
+
+
+  const handleOpen = (e: any) => {
+    e.preventDefault();
+    setOpen(true);
+  };
+
+  const handleClose =  (e: any) => {
+    e.preventDefault();
+    setOpen(false);
+  };
+
 
   return (
     <div className={classes.wrapper}>
@@ -100,14 +120,26 @@ export default function Products({ products, numberPages, networkStatus}: IProdu
                       <Typography className={classes.item__price} >PRICE: 60.0 Euro</Typography>
                     </CardContent>
                   </CardActionArea>
-                  <CardActions>
-                    <Button size="small" color="primary">
-                      Add To Cart
-                    </Button>
-                    <Button size="small" color="primary">
-                      Learn More
+                  <CardActions className={classes.item__buttons}>
+                    <Box component="div">
+                      <Button size="small" color="primary"  className={classes.button__addToCart}>
+                        Add To Cart
+                      </Button>
+                      <Button size="small" color="primary">
+                        Learn More
+                      </Button>
+                    </Box>
+                    <Button size="small" color="primary" onClick={handleOpen}>
+                      Delete
                     </Button>
                   </CardActions>
+                  {open? (<Modal
+                          handleClose={handleClose}
+                          handleOpen={handleOpen}
+                          open={open}
+                      />)
+                      :null
+                  }
                 </Card>
               </Link>
 
