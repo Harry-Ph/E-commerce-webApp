@@ -28,7 +28,7 @@ import { PrismaClient } from "@prisma/client";
 import { request } from "graphql-request";
 import useSWR, { mutate, trigger } from "swr";
 const prisma2 = new PrismaClient();
-import Modal from '../../components/Modal';
+import CustomModal from '../../components/Modal';
 import Router from "next/router";
 import dynamic from 'next/dynamic'
 import LazyLoad from 'react-lazyload';
@@ -125,7 +125,7 @@ export default function Products({ skip, products, numberPages }: IProducts) {
     <div className={classes.wrapper}>
       {/* Break component ===>  */}
       {open && (
-        activeProduct && <Modal
+        activeProduct && <CustomModal
             handleOpen={handleOpen}
             product={activeProduct!}
             handleClose={handleClose}
@@ -136,7 +136,10 @@ export default function Products({ skip, products, numberPages }: IProducts) {
         />
 
       )}
-      {openEdit? (<Modal
+      {openEdit? (<CustomModal
+          redirectRouting={redirectRouting}
+          product={activeProduct!}
+          currentPage= {router.query.page as string}
               handleClose={handleOpenOrCloseEdit}
               handleOpen={handleOpenOrCloseEdit}
               open={openEdit}
