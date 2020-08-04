@@ -2,6 +2,11 @@ import {createStyles, makeStyles, Theme} from '@material-ui/core'
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
+      wrapper: {
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        maxWidth: '1280px'
+      },
         content__pagination: {
             marginLeft: '20px'
         },
@@ -25,12 +30,16 @@ const useStyles = makeStyles((theme: Theme) =>
         },
         content__items: {
             display: 'flex',
-            maxHeight: '720px'
+            maxHeight: '768px',
+            flexWrap: 'wrap'
         },
         content__item: {
-            width: '30%',
-            margin: '20px'
+            width: '100%',
         },
+      lazyLoading: {
+        width: '30% !important',
+        padding: '24px'
+      },
         item__media: {
             width: '80%',
             height: '160px',

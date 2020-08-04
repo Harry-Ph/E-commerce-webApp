@@ -30,8 +30,10 @@ import useSWR, { mutate, trigger } from "swr";
 const prisma2 = new PrismaClient();
 import Modal from '../../components/Modal';
 import Router from "next/router";
+import dynamic from 'next/dynamic'
+import LazyLoad from 'react-lazyload';
 
-const take = "3";
+const take = "10";
 
 const API = "http://localhost:3000/api/graphql";
 const fetcher = (query: any, skip: string, take: string) =>
@@ -87,6 +89,14 @@ export default function Products({ skip, products, numberPages }: IProducts) {
     return <Loading />;
   }
 
+  const handleOnclickDeleteBtn = async ( product: Product, e: any) => {
+    await handleOpen(e);// Active product. ...
+    await setActiveProduct(product);
+  }
+
+  const redirectRouting = async (currentPage: string) => {
+   await Router.replace(`/products/${currentPage}`,  `/products/${currentPage}`, {shallow: true})
+  }
 
   const handleOpen = (e: any) => {
     e.preventDefault();
@@ -114,6 +124,7 @@ export default function Products({ skip, products, numberPages }: IProducts) {
             product={activeProduct!}
             handleClose={handleClose}
             open={open}
+            redirectRouting={redirectRouting}
             currentPage= {router.query.page as string}
         />
 
@@ -144,65 +155,72 @@ export default function Products({ skip, products, numberPages }: IProducts) {
         {(products && products.length > 0) || !router.isFallback ? (
           productArray?.map((p, i) => {
             return (
-              <Link
-                href="/products/details/[id]"
-                as={`/products/details/${p.id}`}
-              >
-                <Card key={i} className={classes.content__item}>
-                  <CardActionArea>
-                    <CardMedia
-                      className={classes.item__media}
-                      image="https://cdn.bike24.net/i/mb/d8/fa/b2/277893-00-d-557791.jpg"
-                      title="Contemplative Reptile"
-                    />
-                    <CardContent>
-                      <Typography gutterBottom variant="h5" component="h2">
-                        {p?.name}
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        color="textSecondary"
-                        component="p"
-                      >
-                        Maximum impact cushioning. The brutal, repetitive,
-                        downward force of sport can wreak havoc on the body and
-                        on performance. Max Air cushioning is specifically
-                        engineered to handle these impacts and provide
-                        protection. Max Air is big air designed to take a
-                        pounding.
-                      </Typography>
-                      <Typography className={classes.item__price}>
-                        PRICE: 60.0 Euro
-                      </Typography>
-                    </CardContent>
-                  </CardActionArea>
-                  <CardActions className={classes.item__buttons}>
-                    <Box component="div">
-                      <Button
-                        size="small"
-                        color="primary"
-                        className={classes.button__addToCart}
-                      >
-                        Add To Cart
-                      </Button>
-                      <Button size="small" color="primary">
-                        Learn More
-                      </Button>
-                    </Box>
-                    {/* Set active product ===> nhu */}
-                    <Button
-                      size="small"
-                      color="primary"
-                      onClick={async (e) => {
-                        await handleOpen(e);// Active product. ...
-                        await setActiveProduct(p);
-                      }}
-                    >
-                      Delete
-                    </Button>
-                  </CardActions>
-                </Card>
-              </Link>
+              <Box className={classes.lazyLoading}>
+                <LazyLoad
+                  key={p!.id}
+                  height={3}
+                  offset={[-3,3]}
+                  placeholder={<Loading/>}
+
+                >
+                  <Link
+                    href="/products/details/[id]"
+                    as={`/products/details/${p.id}`}
+                  >
+                    <Card key={i} className={classes.content__item}>
+                      <CardActionArea>
+                        <CardMedia
+                          className={classes.item__media}
+                          image="https://cdn.bike24.net/i/mb/d8/fa/b2/277893-00-d-557791.jpg"
+                          title="Contemplative Reptile"
+                        />
+                        <CardContent>
+                          <Typography gutterBottom variant="h5" component="h2">
+                            {p?.name}
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            color="textSecondary"
+                            component="p"
+                          >
+                            Maximum impact cushioning. The brutal, repetitive,
+                            downward force of sport can wreak havoc on the body and
+                            on performance. Max Air cushioning is specifically
+                            engineered to handle these impacts and provide
+                            protection. Max Air is big air designed to take a
+                            pounding.
+                          </Typography>
+                          <Typography className={classes.item__price}>
+                            PRICE: 60.0 Euro
+                          </Typography>
+                        </CardContent>
+                      </CardActionArea>
+                      <CardActions className={classes.item__buttons}>
+                        <Box component="div">
+                          <Button
+                            size="small"
+                            color="primary"
+                            className={classes.button__addToCart}
+                          >
+                            Add To Cart
+                          </Button>
+                          <Button size="small" color="primary">
+                            Learn More
+                          </Button>
+                        </Box>
+                        {/* Set active product ===> nhu */}
+                        <Button
+                          size="small"
+                          color="primary"
+                          onClick={(e) => handleOnclickDeleteBtn(p, e)}
+                        >
+                          Delete
+                        </Button>
+                      </CardActions>
+                    </Card>
+                  </Link>
+                </LazyLoad>
+              </Box>
             );
           })
         ) : (

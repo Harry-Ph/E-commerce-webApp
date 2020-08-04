@@ -7,6 +7,7 @@ import useStyles from './style';
 import Router, {useRouter} from "next/router";
 import {Product} from "../../interfaces";
 import {FormikConfig, FormikValues} from "formik";
+import Loading from "../Loading";
 
 const sleep = (time) => new Promise((acc) => setTimeout(acc, time));
 
@@ -34,13 +35,14 @@ const API = 'http://localhost:3000/api/graphql'
 
 export interface IModel {
   currentPage: any
-  handleOpen: ()=> void
+  handleOpen: (e: any)=> void
   product: Product
-  handleClose: ()=> void
+  handleClose: (e: any)=> void
+  redirectRouting:  (currentPage: string)=> void
   open: boolean
 }
 // @ts-ignore
-export default function TransitionsModal({currentPage, handleOpen, product, handleClose, open}: IModel) {
+export default function TransitionsModal({redirectRouting, currentPage, handleOpen, product, handleClose, open}: IModel) {
     const classes = useStyles();
     const [isLoading, setIsLoading] = useState(false);
     const handleRemoveInModal = async (e) => {
@@ -49,13 +51,16 @@ export default function TransitionsModal({currentPage, handleOpen, product, hand
       e.stopPropagation();
 
       await setIsLoading(true)
-      await sleep(2000);
+      await sleep(2500);
 
       await mutate(API);
       const {id} = product;
       await request(API, REMOVE_PRODUCT, {id})
       await trigger(API);
-      await Router.push(`/products/${currentPage}`)
+      await handleClose(e);
+
+      // await redirectRouting(String(currentPage))
+      // await Router.replace(`/products/${currentPage}`,  `/products/${currentPage}`, {shallow: true})
     }
 
     return (
@@ -88,7 +93,7 @@ export default function TransitionsModal({currentPage, handleOpen, product, hand
                           color="default"
                           type="submit"
                           onClick={handleClose}
-
+                          disabled={isLoading}
                         >CANCEL</Button>
                     </div>
                 </Fade>
