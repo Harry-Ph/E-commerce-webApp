@@ -198,7 +198,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
             query: DETAIL_PRODUCT,
             variables: {queryStr: ctx?.params?.id}
         })
-        console.log('aaaa----->', data)
+
         return {
             props: {
                 product: data!,

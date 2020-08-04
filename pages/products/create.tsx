@@ -80,7 +80,6 @@ export default function CreateProduct() {
           }}
           onSubmit={async (values) => {
             await sleep(2000);
-            console.log('values', values);
             // try {
             //   const {data} = await client.query({
             //     query: CREATE_PRODUCT,

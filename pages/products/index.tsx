@@ -1,25 +1,44 @@
-import React, {useState} from 'react'
-import useStyles from './style'
-import { PaginationRenderItemParams } from '@material-ui/lab';
-import { Card, CardMedia, CardContent, Typography, CardActionArea, CardActions, Button } from '@material-ui/core'
-import {GetStaticPaths, GetStaticProps} from "next";
+import React, { useState } from "react";
+import useStyles from "./style";
+import { PaginationRenderItemParams } from "@material-ui/lab";
+import {
+  Card,
+  CardMedia,
+  CardContent,
+  Typography,
+  CardActionArea,
+  CardActions,
+  Button,
+  Backdrop,
+  Fade,
+} from "@material-ui/core";
+import { GetStaticPaths, GetStaticProps } from "next";
 import Loading from "../../components/Loading";
-import {gql, NetworkStatus} from "@apollo/client";
+import { gql } from "@apollo/client";
 import client from "../apollo";
-import {Product} from "../../interfaces";
+import { Product } from "../../interfaces";
 import Link from "next/link";
-import {useRouter} from "next/router";
-import Pagination from '@material-ui/lab/Pagination';
-import PaginationItem from '@material-ui/lab/PaginationItem';
-import { ParsedUrlQuery } from 'querystring';
-import { PrismaClient } from "@prisma/client"
+import { useRouter } from "next/router";
+import Pagination from "@material-ui/lab/Pagination";
+import PaginationItem from "@material-ui/lab/PaginationItem";
 import Skeleton from "@material-ui/lab/Skeleton";
 import Box from "@material-ui/core/Box";
-const prisma2 = new PrismaClient()
-import Modal from "../../components/Modal";
+import { ParsedUrlQuery } from "querystring";
+import { PrismaClient } from "@prisma/client";
+import { request } from "graphql-request";
+import useSWR, { mutate, trigger } from "swr";
+const prisma2 = new PrismaClient();
+import CustomModal from '../../components/Modal';
+import Router from "next/router";
+import dynamic from 'next/dynamic'
+import LazyLoad from 'react-lazyload';
 
+const take = "9";
 
-;
+const API = "http://localhost:3000/api/graphql";
+const fetcher = (query: any, skip: string, take: string) =>
+  request(API, query, { skip, take });
+
 const ALL_PRODUCTS = gql`
     query allProducts($skip: String!, $take: String!) {
         allProducts(skip: $skip, take: $take) {
@@ -27,48 +46,68 @@ const ALL_PRODUCTS = gql`
             name
         }
     }
-`
+`;
+
+const ALL_PRODUCTS2 = /* GraphQL */ `
+  query allProducts($skip: String!, $take: String!) {
+    allProducts(skip: $skip, take: $take) {
+      id
+      name
+    }
+  }
+`;
+
+/* GraphQL */
+const CREATE_PRODUCT2 = /* GraphQL */ `
+  mutation createNewOneProduct($name: String!) {
+    createNewOneProduct(name: $name) {
+      id
+      name
+    }
+  }
+`;
 
 export interface IProducts {
-  products: Product[]
-  numberPages: number,
-  networkStatus: any
+  products: Product[];
+  numberPages: number;
+  skip: string;
 }
 
-export default function Products({ products, numberPages, networkStatus}: IProducts) {
+export default function Products({ skip, products, numberPages }: IProducts) {
   const classes = useStyles();
-
-  console.log('networkStatus component ...', networkStatus)
-  const router = useRouter();
-  if( router.isFallback || !products) {
-    return <Loading/>
-  }
-
-  // const { loading, error, data, refetch, networkStatus } = useQuery(
-  //   GET_DOG_PHOTO,
-  //   {
-  //     variables: { breed },
-  //     notifyOnNetworkStatusChange: true,
-  //   },
-  // );
-
-  // if(networkStatus === NetworkStatus.refetch) {
-  //   return <Loading/>
-  // }
-
-  //modal function
   const [open, setOpen] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
+  const [activeProduct, setActiveProduct] = useState<Product>();
 
+  const { data } = useSWR([ALL_PRODUCTS2, skip, take], {
+    initialData: products,
+  });
+  const updatedProducts: Product[] = data! || [];
+  const loading: boolean = !data;
 
+  const router = useRouter();
+  if (router.isFallback || loading) {
+    return <Loading />;
+  }
+
+  const handleOnclickDeleteBtn = async ( product: Product, e: any) => {
+    await handleOpen(e);// Active product. ...
+    await setActiveProduct(product);
+  }
+
+  const redirectRouting = async (currentPage: string) => {
+    await Router.replace(`/products/${currentPage}`,  `/products/${currentPage}`, {shallow: true})
+  }
 
   const handleOpen = (e: any) => {
     e.preventDefault();
+    e.stopPropagation();
     setOpen(true);
   };
 
-  const handleClose =  (e: any) => {
+  const handleClose = (e: any) => {
     e.preventDefault();
+    e.stopPropagation();
     setOpen(false);
   };
 
@@ -77,125 +116,179 @@ export default function Products({ products, numberPages, networkStatus}: IProdu
     setOpenEdit(!openEdit);
   };
 
+  const productArray = Object.keys(updatedProducts).map(
+    (k) => updatedProducts[k]
+  )[0];
+
+
   return (
     <div className={classes.wrapper}>
+      {/* Break component ===>  */}
+      {open && (
+        activeProduct && <CustomModal
+            handleOpen={handleOpen}
+            product={activeProduct!}
+            handleClose={handleClose}
+            open={open}
+            redirectRouting={redirectRouting}
+            currentPage= {(router.query.page || 1) as string}
+            isEdit={false}
+            products ={productArray! || products! || []}
+        />
+
+      )}
+      {openEdit? (<CustomModal
+          redirectRouting={redirectRouting}
+          product={activeProduct!}
+          currentPage= {(router.query.page || 1) as string}
+          handleClose={handleOpenOrCloseEdit}
+          handleOpen={handleOpenOrCloseEdit}
+          open={openEdit}
+          isEdit={true}
+          products ={productArray! || products! || []}
+        />)
+        :null
+      }
       <div className={classes.content__tittle}>
         <div>POPULAR PRODUCTS</div>
       </div>
       <Box className={classes.content__pagination}>
-        {
-          (numberPages > 0 || !router.isFallback) ? (<Pagination
-              page={parseInt(router.query.page as string || '1')}
-              count={numberPages}
-              defaultPage={1}
-              renderItem={(item) => (
-                <PaginationItem
-                  component={MaterialUiLink}
-                  query={router.query}
-                  item={item}
-                  {...item}
-                />
-              )}
-            />) :
-            <Skeleton variant="rect" width={'30vw'} height={'28px'} />
-        }
+        {numberPages > 0 || !router.isFallback ? (
+          <Pagination
+            page={parseInt((router.query.page as string) || "1")}
+            count={numberPages}
+            defaultPage={1}
+            renderItem={(item) => (
+              <PaginationItem
+                component={MaterialUiLink}
+                query={router.query || 1}
+                item={item}
+                {...item}
+              />
+            )}
+          />
+        ) : (
+          <Skeleton variant="rect" width={"30vw"} height={"28px"} />
+        )}
       </Box>
       <div className={classes.content__items}>
-        {
-          ((products && products.length > 0) || !router.isFallback) ?
-            (products?.map(p=> (
-              <>
-                <Link href="/products/details/[id]" as={`/products/details/${p.id}`}>
-                  <Card className={classes.content__item}>
-                    <CardActionArea>
-                      <CardMedia className={classes.item__media}
-                                 image="https://cdn.bike24.net/i/mb/d8/fa/b2/277893-00-d-557791.jpg"
-                                 title="Contemplative Reptile"
-                      />
-                      <CardContent>
-                        <Typography gutterBottom variant="h5" component="h2">
-                          {p?.name}
-                        </Typography>
-                        <Typography variant="body2" color="textSecondary" component="p">
-                          Maximum impact cushioning. The brutal, repetitive,
-                          downward force of sport can wreak havoc on the body and on performance.
-                          Max Air cushioning is specifically engineered to handle these impacts and provide protection.
-                          Max Air is big air designed to take a pounding.
-                        </Typography>
-                        <Typography className={classes.item__price} >PRICE: 60.0 Euro</Typography>
-                      </CardContent>
-                    </CardActionArea>
-                    <CardActions className={classes.item__buttons}>
-                      <Box component="div">
-                        <Button size="small" color="primary"  className={classes.button__addToCart}>
-                          Add To Cart
+        {(products && products.length > 0) || !router.isFallback ? (
+          productArray?.map((p, i) => {
+            return (
+              <Box className={classes.lazyLoading}>
+                <LazyLoad
+                  key={p!.id}
+                  height={3}
+                  offset={[-3,3]}
+                  placeholder={<Loading/>}
+                >
+                  <Link
+                    href="/products/details/[id]"
+                    as={`/products/details/${p.id}`}
+                  >
+                    <Card key={i} className={classes.content__item}>
+                      <CardActionArea>
+                        <CardMedia
+                          className={classes.item__media}
+                          image="https://cdn.bike24.net/i/mb/d8/fa/b2/277893-00-d-557791.jpg"
+                          title="Contemplative Reptile"
+                        />
+                        <CardContent>
+                          <Typography gutterBottom variant="h5" component="h2">
+                            {p?.name}
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            color="textSecondary"
+                            component="p"
+                          >
+                            Maximum impact cushioning. The brutal, repetitive,
+                            downward force of sport can wreak havoc on the body and
+                            on performance. Max Air cushioning is specifically
+                            engineered to handle these impacts and provide
+                            protection. Max Air is big air designed to take a
+                            pounding.
+                          </Typography>
+                          <Typography className={classes.item__price}>
+                            PRICE: 60.0 Euro
+                          </Typography>
+                        </CardContent>
+                      </CardActionArea>
+                      <CardActions className={classes.item__buttons}>
+                        <Box component="div">
+                          <Button
+                            size="small"
+                            color="primary"
+                            className={classes.button__addToCart}
+                          >
+                            Add To Cart
+                          </Button>
+                          <Button size="small" color="primary" onClick={handleOpenOrCloseEdit}>
+                            EDIT
+                          </Button>
+                        </Box>
+                        {/* Set active product ===> nhu */}
+                        <Button
+                          size="small"
+                          color="primary"
+                          onClick={(e) => handleOnclickDeleteBtn(p, e)}
+                        >
+                          Delete
                         </Button>
-                        <Button size="small" color="primary" onClick={handleOpenOrCloseEdit}>
-                          Edit
-                        </Button>
-                      </Box>
-                      <Button size="small" color="primary" onClick={handleOpen}>
-                        Delete
-                      </Button>
-                    </CardActions>
-                  </Card>
-                </Link>
-                {open? (<Modal
-                        handleClose={handleClose}
-                        handleOpen={handleOpen}
-                        open={open}
-                        isEdit={false}
-                    />)
-                    :null
-                }
-                {openEdit? (<Modal
-                        handleClose={handleOpenOrCloseEdit}
-                        handleOpen={handleOpenOrCloseEdit}
-                        open={openEdit}
-                        isEdit={true}
-                    />)
-                    :null
-                }
-              </>
-
-            ))) :
-            <Box className={classes.content__skeleton}>
-              <Skeleton variant="rect" width={'28vw'} height={'600px'} />
-              <div className={classes.wrapper__loading}>
-                <Loading />
-              </div>
-            </Box>
-        }
+                      </CardActions>
+                    </Card>
+                  </Link>
+                </LazyLoad>
+              </Box>
+            );
+          })
+        ) : (
+          <Box className={classes.content__skeleton}>
+            <Skeleton variant="rect" width={"28vw"} height={"720px"} />
+            <div className={classes.wrapper__loading}>
+              <Loading />
+            </div>
+          </Box>
+        )}
       </div>
     </div>
-  )
+  );
 }
 
-export const getStaticProps:GetStaticProps = async (ctx) => {
-  const take = '3';
+export const getStaticProps: GetStaticProps = async (ctx) => {
   const totalProducts = await prisma2.product.findMany();
-  const productsArray = Object.keys(totalProducts).map((k) => totalProducts[k])
-  const numberPages = Math.ceil((productsArray?.length || 0) as number / +take) as number;
+  const productsArray = Object.keys(totalProducts).map(
+    (k) => totalProducts[parseInt(k)]
+  );
+  const numberPages = Math.ceil(
+    ((productsArray?.length || 0) as number) / +take
+  ) as number;
+  const pageQuery = (ctx?.params?.page || 1) as string;
 
-  const {  loading, error, data, networkStatus } = await client.query({
-    query: ALL_PRODUCTS,
-    variables: {
-      skip: '0',
-      take: take
-    },
-  })
+  const skip = String((parseInt(pageQuery) - 1) * +take);
 
-  console.log('networkStatus statis func ...', networkStatus)
-  const products = Object.keys(data).map((k) => data[k])[0]
+  // const {  data } = await client.query({
+  //   query: ALL_PRODUCTS,
+  //   variables: {
+  //     skip: skip,
+  //     take: take
+  //   }
+  // })
 
+  const products = await fetcher(ALL_PRODUCTS2, skip, take);
+
+  // const products = Object.keys(data).map((k) => data[k])[0]
+  // console.log(' server build...', data)
+  //   const deleteItem = await fetcher(REMOVE_PRODUCT_BY_ID, skip, take);
+  // console.log('deleteItem:', deleteItem);
   return {
     props: {
       products,
       numberPages,
-      networkStatus
+      skip,
     },
-  }
-}
+  };
+};
 
 export interface MaterialUiLinkProps {
   item: PaginationRenderItemParams;
@@ -203,11 +296,16 @@ export interface MaterialUiLinkProps {
 }
 
 export function MaterialUiLink({ item, query, ...props }: MaterialUiLinkProps) {
+  // const router = useRouter();
+  // if ( !router.query.page)
+  //   return (
+  //     <Link href="/products" as={`/products`}>
+  //       <a {...props}></a>
+  //     </Link>
+  //   );
+
   return (
-    <Link
-      href="/products/[page]"
-      as={`/products/${item.page}`}
-    >
+    <Link href="/products/[page]" as={`/products/${item.page}`}>
       <a {...props}></a>
     </Link>
   );

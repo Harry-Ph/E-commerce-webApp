@@ -11,6 +11,8 @@ import Loading from "../Loading";
 import {object, string} from "yup";
 
 const sleep = (time) => new Promise((acc) => setTimeout(acc, time));
+const fetcher = (query: any, skip: string, take: string) =>
+  request(API, query, { skip, take });
 
 /* GraphQL */
 const REMOVE_PRODUCT = /* GraphQL */`
@@ -21,6 +23,15 @@ const REMOVE_PRODUCT = /* GraphQL */`
         }
     }
 `
+
+const ALL_PRODUCTS2 = /* GraphQL */ `
+  query allProducts($skip: String!, $take: String!) {
+    allProducts(skip: $skip, take: $take) {
+      id
+      name
+    }
+  }
+`;
 
 /* GraphQL */
 const CREATE_PRODUCT2 = /* GraphQL */ `
@@ -42,28 +53,44 @@ export interface IModel {
   redirectRouting:  (currentPage: string)=> void
   open: boolean
   isEdit: boolean
+  products: Product[]
 }
 
 const initialValues = {
     name: '',
 }
+const take = '9'
 
 // @ts-ignore
-export default function TransitionsModal({redirectRouting, currentPage, handleOpen, product, handleClose, open, isEdit}: IModel) {
+export default function TransitionsModal({products, redirectRouting, currentPage, handleOpen, product, handleClose, open, isEdit}: IModel) {
     const classes = useStyles();
     const [isLoading, setIsLoading] = useState(false);
+    const router = useRouter();
+
     const handleRemoveInModal = async (e) => {
 
       e.preventDefault();
       e.stopPropagation();
 
       await setIsLoading(true)
-      await sleep(2500);
 
-      await mutate(API);
+      await sleep(2000);
       const {id} = product;
+      console.log('products', products)
+
+      await mutate(API, [...products?.filter(p => p?.id != id)], false);
+
       await request(API, REMOVE_PRODUCT, {id})
+
+      // await  mutate(API, async () => {
+      //   const {allProducts} = await fetcher(ALL_PRODUCTS2, skip as string, take as string);
+      //   return [...allProducts?.filter(p => p?.id != id)];
+      // })
+
       await trigger(API);
+
+
+
       await handleClose(e);
 
       // await redirectRouting(String(currentPage))

@@ -21,7 +21,7 @@ export interface ITableProps {}
 
 const TableComponent = ({ items }: Props) => {
   const classes = useStyles()
-console.log(items)
+
   return (
     <TableContainer>
         <Table className={classes.table} aria-label="simple table">
