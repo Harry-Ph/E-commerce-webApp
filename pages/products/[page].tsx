@@ -76,6 +76,7 @@ export interface IProducts {
 export default function Products({ skip, products, numberPages }: IProducts) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
   const [activeProduct, setActiveProduct] = useState<Product>();
 
   const { data } = useSWR([ALL_PRODUCTS2, skip, take], {
@@ -110,6 +111,11 @@ export default function Products({ skip, products, numberPages }: IProducts) {
     setOpen(false);
   };
 
+  const handleOpenOrCloseEdit = (e: any) => {
+    e.preventDefault();
+    setOpenEdit(!openEdit);
+  };
+
   const productArray = Object.keys(updatedProducts).map(
     (k) => updatedProducts[k]
   )[0];
@@ -126,9 +132,18 @@ export default function Products({ skip, products, numberPages }: IProducts) {
             open={open}
             redirectRouting={redirectRouting}
             currentPage= {router.query.page as string}
+            isEdit={false}
         />
 
       )}
+      {openEdit? (<Modal
+              handleClose={handleOpenOrCloseEdit}
+              handleOpen={handleOpenOrCloseEdit}
+              open={openEdit}
+              isEdit={true}
+          />)
+          :null
+      }
       <div className={classes.content__tittle}>
         <div>POPULAR PRODUCTS</div>
       </div>
@@ -204,8 +219,8 @@ export default function Products({ skip, products, numberPages }: IProducts) {
                           >
                             Add To Cart
                           </Button>
-                          <Button size="small" color="primary">
-                            Learn More
+                          <Button size="small" color="primary" onClick={handleOpenOrCloseEdit}>
+                            EDIT
                           </Button>
                         </Box>
                         {/* Set active product ===> nhu */}
