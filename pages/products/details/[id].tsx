@@ -4,7 +4,7 @@ import FavoriteBorderOutlinedIcon from '@material-ui/icons/FavoriteBorderOutline
 import useStyles from './style'
 import { gql } from '@apollo/client'
 import {GetServerSideProps } from "next";
-import client from "../../apollo";
+import client from "../../../src/apollo";
 import Loading from "../../../components/Loading";
 import {Product} from "../../../interfaces";
 
@@ -12,14 +12,6 @@ import {Product} from "../../../interfaces";
 const DETAIL_PRODUCT = gql`
     query product($queryStr: String!) {
         product(queryStr: $queryStr) {
-            id
-            name
-        }
-    }
-`
-const ALL_PRODUCTS = gql`
-    query allProducts($skip: String!, $take: String!) {
-        allProducts(skip: $skip, take: $take) {
             id
             name
         }

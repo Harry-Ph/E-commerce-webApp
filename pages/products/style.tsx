@@ -1,5 +1,6 @@
 import {createStyles, makeStyles, Theme} from '@material-ui/core'
 
+// @ts-ignore
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
       wrapper: {

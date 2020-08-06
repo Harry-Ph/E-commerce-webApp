@@ -1,27 +1,15 @@
-import Link from 'next/link'
-import Layout from '../components/Layout'
-import {gql, useQuery} from '@apollo/client'
 import useStyles from './products/style'
 import {Product} from "../interfaces";
-import client from "./apollo";
-import {Button, Card, CardActionArea, CardActions, CardContent, CardMedia, Typography} from "@material-ui/core";
+import { Card, CardActionArea, CardActions, CardContent, CardMedia, Typography} from "@material-ui/core";
 import React from "react";
 import Box from "@material-ui/core/Box";
 
-const ALL_PRODUCTS = gql`
-    query allProducts($skip: String!, $take: String!) {
-        allProducts(skip: $skip, take: $take) {
-            id
-            name
-        }
-    }
-`
 
 export interface  IProducts {
     products: Product[]
 }
 // @ts-ignore
-export default function AboutPage({loading, data}) {
+export default function AboutPage() {
     const classes = useStyles();
     const devs = [
         {

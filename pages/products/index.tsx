@@ -9,13 +9,9 @@ import {
   CardActionArea,
   CardActions,
   Button,
-  Backdrop,
-  Fade,
 } from "@material-ui/core";
-import { GetStaticPaths, GetStaticProps } from "next";
+import { GetStaticProps } from "next";
 import Loading from "../../components/Loading";
-import { gql } from "@apollo/client";
-import client from "../apollo";
 import { Product } from "../../interfaces";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -25,28 +21,19 @@ import Skeleton from "@material-ui/lab/Skeleton";
 import Box from "@material-ui/core/Box";
 import { ParsedUrlQuery } from "querystring";
 import { PrismaClient } from "@prisma/client";
-import { request } from "graphql-request";
-import useSWR, { mutate, trigger } from "swr";
+// import { request } from "graphql-request";
+import useSWR from "swr";
 const prisma2 = new PrismaClient();
 import CustomModal from '../../components/Modal';
 import Router from "next/router";
-import dynamic from 'next/dynamic'
 import LazyLoad from 'react-lazyload';
 
 const take = "9";
 
-const API = "http://localhost:3000/api/graphql";
-const fetcher = (query: any, skip: string, take: string) =>
-  request(API, query, { skip, take });
+// const API = "http://localhost:3000/api/graphql";
+// const fetcher = (query: any, skip: string, take: string) =>
+//   request(API, query, { skip, take });
 
-const ALL_PRODUCTS = gql`
-    query allProducts($skip: String!, $take: String!) {
-        allProducts(skip: $skip, take: $take) {
-            id
-            name
-        }
-    }
-`;
 
 const ALL_PRODUCTS2 = /* GraphQL */ `
   query allProducts($skip: String!, $take: String!) {
@@ -57,18 +44,11 @@ const ALL_PRODUCTS2 = /* GraphQL */ `
   }
 `;
 
-/* GraphQL */
-const CREATE_PRODUCT2 = /* GraphQL */ `
-  mutation createNewOneProduct($name: String!) {
-    createNewOneProduct(name: $name) {
-      id
-      name
-    }
-  }
-`;
 
 export interface IProducts {
-  products: Product[];
+  products: {
+    allProducts: Product[]
+  };
   numberPages: number;
   skip: string;
 }
@@ -79,10 +59,11 @@ export default function Products({ skip, products, numberPages }: IProducts) {
   const [openEdit, setOpenEdit] = useState(false);
   const [activeProduct, setActiveProduct] = useState<Product>();
 
+
   const { data } = useSWR([ALL_PRODUCTS2, skip, take], {
     initialData: products,
   });
-  const updatedProducts: Product[] = data! || [];
+
   const loading: boolean = !data;
 
   const router = useRouter();
@@ -116,10 +97,14 @@ export default function Products({ skip, products, numberPages }: IProducts) {
     setOpenEdit(!openEdit);
   };
 
-  const productArray = Object.keys(updatedProducts).map(
-    (k) => updatedProducts[k]
-  )[0];
+  // @ts-ignore
+  let updatedProducts: Product[] = [];
 
+  const typeOfUpdateProducts = typeof data
+  if (typeOfUpdateProducts === "object") {
+    // @ts-ignore
+    updatedProducts = data?.allProducts || undefined
+  }
 
   return (
     <div className={classes.wrapper}>
@@ -133,7 +118,8 @@ export default function Products({ skip, products, numberPages }: IProducts) {
             redirectRouting={redirectRouting}
             currentPage= {(router.query.page || 1) as string}
             isEdit={false}
-            products ={productArray! || products! || []}
+          // @ts-ignore
+            products ={productArray || products || []}
         />
 
       )}
@@ -145,7 +131,8 @@ export default function Products({ skip, products, numberPages }: IProducts) {
           handleOpen={handleOpenOrCloseEdit}
           open={openEdit}
           isEdit={true}
-          products ={productArray! || products! || []}
+          // @ts-ignore
+          products ={productArray || products || []}
         />)
         :null
       }
@@ -172,14 +159,14 @@ export default function Products({ skip, products, numberPages }: IProducts) {
         )}
       </Box>
       <div className={classes.content__items}>
-        {(products && products.length > 0) || !router.isFallback ? (
-          productArray?.map((p, i) => {
+        {(updatedProducts) ? (
+          updatedProducts.map((p: Product, i: any) => {
             return (
               <Box className={classes.lazyLoading}>
                 <LazyLoad
-                  key={p!.id}
-                  height={3}
-                  offset={[-3,3]}
+                  key={p.id}
+                  height={9}
+                  offset={[-9,9]}
                   placeholder={<Loading/>}
                 >
                   <Link
@@ -195,7 +182,7 @@ export default function Products({ skip, products, numberPages }: IProducts) {
                         />
                         <CardContent>
                           <Typography gutterBottom variant="h5" component="h2">
-                            {p?.name}
+                            {p.name}
                           </Typography>
                           <Typography
                             variant="body2"
@@ -267,6 +254,11 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
 
   const skip = String((parseInt(pageQuery) - 1) * +take);
 
+  const productsOfPage = await prisma2.product.findMany({
+    skip: +skip,
+    take: +take
+  });
+
   // const {  data } = await client.query({
   //   query: ALL_PRODUCTS,
   //   variables: {
@@ -275,12 +267,12 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
   //   }
   // })
 
-  const products = await fetcher(ALL_PRODUCTS2, skip, take);
+  const products = {
+    allProducts: productsOfPage
+  }
+  // Comment because we should not fetch api in getStaticProps, so we get data directly from db
+  // const products: Product[] = await fetcher(ALL_PRODUCTS2, skip as string, take as string);
 
-  // const products = Object.keys(data).map((k) => data[k])[0]
-  // console.log(' server build...', data)
-  //   const deleteItem = await fetcher(REMOVE_PRODUCT_BY_ID, skip, take);
-  // console.log('deleteItem:', deleteItem);
   return {
     props: {
       products,

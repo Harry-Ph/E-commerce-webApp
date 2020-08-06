@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { Ppl } from '../../interfaces'
 import Layout from '../../components/Layout'
 import gql from 'graphql-tag'
-import client from '../apollo'
+import client from '../../src/apollo'
 import Table from '../../components/Table';
 import { Box } from '@material-ui/core'
 import Loading from '../../components/Loading'

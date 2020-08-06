@@ -6,16 +6,14 @@ import NavBar from '../components/NavBar/NavBar'
 import Footer from '../components/Footer/Footer'
 import {Router} from 'next/dist/client/router'
 import Head from 'next/head';
-import useSWR, { SWRConfig } from 'swr'
+import  { SWRConfig } from 'swr'
 import { ThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import theme from '../theme';
-import {ApolloProvider} from "@apollo/client";
-import client from "./apollo";
 import Nprogress from 'nprogress';
 import 'nprogress/nprogress.css';
 
-import {useStylesApp} from './style'
+import {useStylesApp} from '../src/style'
 import {request} from "graphql-request";
 
 // the URL to /api/graphql
