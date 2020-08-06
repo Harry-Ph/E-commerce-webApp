@@ -66,17 +66,3 @@ export default function AboutPage() {
     </Box>
 }
 
-// // @ts-ignore
-// export async function getServerSideProps(context) {
-//     // console.log('context--->', context.req)
-//     const { loading, data } = await client.query({
-//         query: ALL_PRODUCTS,
-//         variables: {
-//             skip: "0",
-//             take: "2"
-//         }
-//     })
-//     console.log('aaaaaaa--->', data)
-//     return {props: { loading, data }}
-// }
-
