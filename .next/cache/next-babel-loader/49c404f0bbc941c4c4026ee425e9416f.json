@@ -1,0 +1,1 @@
+{"ast":null,"code":"// @ts-ignore\nimport { makeStyles, createStyles } from '@material-ui/core';\nexport const useStylesApp = makeStyles(() => createStyles({\n  contentApp: {\n    minHeight: '660px'\n  }\n}));","map":null,"metadata":{},"sourceType":"module"}

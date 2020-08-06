@@ -1,4 +1,5 @@
 {
+    "cacheDirectories": [".next/cache"],
     "name": "my-awesome-app",
     "version": "0.0.1",
     "scripts": {

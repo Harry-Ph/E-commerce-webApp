@@ -9,11 +9,11 @@
 /coverage
 
 # next.js
-/.next/
+#/.next/
 /out/
 
 # production
-/build
+#/build
 
 # misc
 .DS_Store
@@ -25,10 +25,10 @@ yarn-error.log*
 yarn.lock
 
 # local env files
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+#.env.local
+#.env.development.local
+#.env.test.local
+#.env.production.local
 
 # json files
 package-lock.json
@@ -36,4 +36,4 @@ package-lock.json
 #.env
 
 #migration
-/prisma/migrations
+#/prisma/migrations
