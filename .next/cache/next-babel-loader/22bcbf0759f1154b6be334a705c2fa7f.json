@@ -1,0 +1,1 @@
+{"ast":null,"code":"import Products from './index';\nexport var __N_SSG = true;\nexport default Products;","map":null,"metadata":{},"sourceType":"module"}

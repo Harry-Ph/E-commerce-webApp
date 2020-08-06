@@ -1,9 +1,10 @@
 {
+    "cacheDirectories": [".next/cache"],
     "name": "my-awesome-app",
     "version": "0.0.1",
     "scripts": {
         "dev": "concurrently -r \"npx nexus dev\" \"npx next\" \"npx graphql-codegen --watch\"",
-        "build": "next build",
+        "build": "  npx prisma generate && next build",
         "start": "next start",
         "type-check": "tsc"
     },

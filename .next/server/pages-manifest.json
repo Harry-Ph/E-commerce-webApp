@@ -1,0 +1,19 @@
+{
+  "/_app": "pages/_app.js",
+  "/_document": "pages/_document.js",
+  "/about": "pages/about.js",
+  "/api/graphql": "pages/api/graphql.js",
+  "/api/users": "pages/api/users.js",
+  "/": "pages/index.js",
+  "/products/[page]": "pages/products/[page].js",
+  "/products/create": "pages/products/create.js",
+  "/products/details/[id]": "pages/products/details/[id].js",
+  "/products/details/style": "pages/products/details/style.js",
+  "/products": "pages/products.js",
+  "/products/style": "pages/products/style.js",
+  "/users/detail": "pages/users/detail.js",
+  "/users/detail/style": "pages/users/detail/style.js",
+  "/users": "pages/users.js",
+  "/users/register": "pages/users/register.js",
+  "/_error": "pages/_error.js"
+}
