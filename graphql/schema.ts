@@ -1,8 +1,6 @@
 import { schema, use } from "nexus";
 import { prisma } from "nexus-plugin-prisma";
 import { idArg, stringArg } from "nexus/components/schema";
-import { PrismaClient } from 'nexus-plugin-prisma/client'
-import {arg} from "nexus/dist/lib/cli";
 
 use(prisma({ features: { crud: true } }));
 
@@ -167,6 +165,7 @@ schema.mutationType({
       args: {
         id: stringArg(),
       },
+      // @ts-ignore
       resolve(parent, {id}, ctx) {
         try {
           return ctx.db.product.delete({
@@ -187,6 +186,7 @@ schema.mutationType({
         id: idArg(),
         name: stringArg()
       },
+      // @ts-ignore
       resolve(parent, {id, name}, ctx) {
         try {
           return ctx.db.product.update({
@@ -209,6 +209,7 @@ schema.mutationType({
       args: {
         name: stringArg(),
       },
+      // @ts-ignore
       resolve(parent, {name}, ctx) {
         try {
           return ctx.db.product.create({

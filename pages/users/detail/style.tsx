@@ -1,13 +1,6 @@
 import {createStyles} from "@material-ui/core";
 import {makeStyles} from "@material-ui/styles";
 
-
-
-
-
-
-
-
 const useStyles = makeStyles(() =>
     createStyles({
             text: {
@@ -21,9 +14,6 @@ const useStyles = makeStyles(() =>
             },
     }
     ));
-
-
-
 
 export default useStyles
 

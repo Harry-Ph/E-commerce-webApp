@@ -1,6 +1,6 @@
 import {createStyles, Theme, makeStyles} from "@material-ui/core";
-// import {makeStyles} from "@material-ui/styles";
 
+// @ts-ignore
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {

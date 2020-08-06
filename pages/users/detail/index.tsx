@@ -1,13 +1,9 @@
-import {GetStaticProps, GetStaticPaths, GetServerSideProps} from 'next'
+import { GetServerSideProps} from 'next'
 
 import { Ppl } from '../../../interfaces'
-import { sampleUserData } from '../../utils/sample-data'
 import Layout from '../../../components/Layout'
-import ListDetail from '../../../components/ListDetail'
-import client from "../../apollo";
-import {AllUsersQuery} from "../index";
+import client from "../../../src/apollo";
 import {gql} from "@apollo/client";
-import {useRouter} from "next/router";
 
 import useStyles from "./style";
 
@@ -29,6 +25,7 @@ type Props = {
   errors?: string
 }
 
+// @ts-ignore
 const StaticPropsDetail = ({ item, errors }: Props) => {
 
   if (errors) {

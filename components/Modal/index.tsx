@@ -1,18 +1,15 @@
 import React, {useState} from 'react';
-import {Modal, Backdrop, Fade, Button, CircularProgress, Box, FormGroup, TextField, MenuItem} from '@material-ui/core';
+import {Modal, Backdrop, Fade, Button, CircularProgress, Box, FormGroup, TextField} from '@material-ui/core';
 
 import {request} from "graphql-request";
-import useSWR, {mutate, trigger} from 'swr'
+import  {mutate, trigger} from 'swr'
 import useStyles from './style';
-import Router, {useRouter} from "next/router";
 import {Product} from "../../interfaces";
-import {ErrorMessage, Field, Form, Formik, FormikConfig, FormikValues} from "formik";
-import Loading from "../Loading";
+import {ErrorMessage, Field, Form, Formik} from "formik";
+
 import {object, string} from "yup";
 
-const sleep = (time) => new Promise((acc) => setTimeout(acc, time));
-const fetcher = (query: any, skip: string, take: string) =>
-  request(API, query, { skip, take });
+const sleep = (time: any) => new Promise((acc: any) => setTimeout(acc, time));
 
 /* GraphQL */
 const REMOVE_PRODUCT = /* GraphQL */`
@@ -23,25 +20,6 @@ const REMOVE_PRODUCT = /* GraphQL */`
         }
     }
 `
-
-const ALL_PRODUCTS2 = /* GraphQL */ `
-  query allProducts($skip: String!, $take: String!) {
-    allProducts(skip: $skip, take: $take) {
-      id
-      name
-    }
-  }
-`;
-
-/* GraphQL */
-const CREATE_PRODUCT2 = /* GraphQL */ `
-  mutation createNewOneProduct($name: String!) {
-    createNewOneProduct(name: $name) {
-      id
-      name
-    }
-  }
-`;
 
 const API = 'http://localhost:3000/api/graphql'
 
@@ -59,15 +37,13 @@ export interface IModel {
 const initialValues = {
     name: '',
 }
-const take = '9'
 
 // @ts-ignore
-export default function TransitionsModal({products, redirectRouting, currentPage, handleOpen, product, handleClose, open, isEdit}: IModel) {
+export default function TransitionsModal({products , redirectRouting, currentPage, handleOpen, product, handleClose, open, isEdit}: IModel) {
     const classes = useStyles();
     const [isLoading, setIsLoading] = useState(false);
-    const router = useRouter();
 
-    const handleRemoveInModal = async (e) => {
+    const handleRemoveInModal = async (e: any) => {
 
       e.preventDefault();
       e.stopPropagation();

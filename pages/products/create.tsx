@@ -16,45 +16,18 @@ import React, { useState } from 'react';
 import {mixed, number, object, string} from 'yup';
 import FormGroup from "@material-ui/core/FormGroup";
 import { Select } from 'formik-material-ui';
-import {gql, useMutation} from "@apollo/client";
 import {request} from "graphql-request";
-import useSWR , {trigger, mutate }from 'swr'
+import {trigger, mutate }from 'swr'
 import Router from "next/router";
 const API = 'http://localhost:3000/api/graphql'
 
-const sleep = (time) => new Promise((acc) => setTimeout(acc, time));
+const sleep = (time:any) => new Promise((acc: any) => setTimeout(acc, time));
 
-const DETAIL_PRODUCT = gql`
-    query product($queryStr: String!) {
-        product(queryStr: $queryStr) {
-            id
-            name
-        }
-    }
-`
-
-const CREATE_PRODUCT = gql`
-    mutation createNewOneProduct($name: String!) {
-        createNewOneProduct(name: $name) {
-            id
-            name
-        }
-    }
-`
 
 /* GraphQL */
 const CREATE_PRODUCT2 = /* GraphQL */`
     mutation createNewOneProduct($name: String!) {
         createNewOneProduct(name: $name) {
-            id
-            name
-        }
-    }
-`
-
-const ALL_PRODUCTS = gql`
-    query allProducts($skip: String!, $take: String!) {
-        allProducts(skip: $skip, take: $take) {
             id
             name
         }

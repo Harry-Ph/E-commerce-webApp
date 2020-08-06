@@ -1,5 +1,4 @@
 import { createMuiTheme } from "@material-ui/core/styles";
-import {elementType} from "prop-types";
 
 // Create a theme instance.
 export const theme = createMuiTheme({
