@@ -1,1 +1,0 @@
-{"ast":null,"code":"var __jsx = React.createElement;\nimport About from '../pages/about';\nimport React from \"react\";\n\nvar IndexPage = function IndexPage() {\n  return __jsx(About, null);\n};\n\nexport default IndexPage;","map":null,"metadata":{},"sourceType":"module"}

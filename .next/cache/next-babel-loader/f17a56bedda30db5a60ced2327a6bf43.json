@@ -1,1 +1,0 @@
-{"ast":null,"code":"import app, { server } from \"nexus\";\nimport \"../../graphql/schema\"; // we'll create this file in a second!\n\napp.assemble();\nexport default server.handlers.graphql;","map":null,"metadata":{},"sourceType":"module"}
