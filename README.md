@@ -1,3 +1,7 @@
+# Deploy Project Link: [here](https://e-commercial-web-app.herokuapp.com/)
+
+
+
 # Complete Introduction to Fullstack, Type-Safe GraphQL (feat. Next.js, Nexus, Prisma)
 
 In this post, you'll learn how to build from scratch an entirely type-safe, fullstack web app, using GraphQL with a database attached!
