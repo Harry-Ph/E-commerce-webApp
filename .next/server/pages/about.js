@@ -152,9 +152,9 @@ function AboutPage() {
     github: 'https://github.com/ptdatkhtn'
   }];
   return __jsx(_material_ui_core_Box__WEBPACK_IMPORTED_MODULE_3___default.a, {
-    className: classes.content__items
+    className: classes.content__about
   }, devs === null || devs === void 0 ? void 0 : devs.map(dev => __jsx(_material_ui_core__WEBPACK_IMPORTED_MODULE_1__["Card"], {
-    className: classes.content__item
+    className: classes.content__item_about
   }, __jsx(_material_ui_core__WEBPACK_IMPORTED_MODULE_1__["CardActionArea"], null, __jsx(_material_ui_core__WEBPACK_IMPORTED_MODULE_1__["CardMedia"], {
     className: classes.item__media,
     image: dev.img,
@@ -230,6 +230,12 @@ const useStyles = Object(_material_ui_core__WEBPACK_IMPORTED_MODULE_0__["makeSty
     display: 'flex',
     maxHeight: '768px',
     flexWrap: 'wrap'
+  },
+  content__about: {
+    display: 'flex'
+  },
+  content__item_about: {
+    margin: '12px'
   },
   content__item: {
     width: '100%'

@@ -6,7 +6,8 @@
         "dev": "concurrently -r \"npx nexus dev\" \"npx next\" \"npx graphql-codegen --watch\"",
         "build": "npx prisma generate && npx nexus build && npm run next-build",
         "next-build": "next build",
-        "start": "next start",
+        "start": "next start -p $PORT || 3000",
+        "heroku-postbuild": "npm run build",
         "type-check": "tsc"
     },
     "dependencies": {

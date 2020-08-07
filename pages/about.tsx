@@ -37,9 +37,9 @@ export default function AboutPage() {
             github: 'https://github.com/ptdatkhtn'
         }
     ]
-    return <Box className={classes.content__items}>
+    return <Box className={classes.content__about}>
         {
-            devs?.map((dev)=> (<Card className={classes.content__item}>
+            devs?.map((dev)=> (<Card className={classes.content__item_about}>
                 <CardActionArea>
                     <CardMedia className={classes.item__media}
                                image={dev.img}

@@ -2,12 +2,12 @@ import React from 'react'
 
 import Toolbar from '@material-ui/core/Toolbar'
 import IconButton from '@material-ui/core/IconButton'
-import Typography from '@material-ui/core/Typography'
 import InputBase from '@material-ui/core/InputBase'
 import SearchIcon from '@material-ui/icons/Search'
 import StoreMallDirectoryIcon from '@material-ui/icons/StoreMallDirectory';
 
 import useStyles from './style'
+import Link from "next/link";
 
 export interface INavBarItemProps {}
 
@@ -22,18 +22,21 @@ const NavBarItem = () => {
       <StoreMallDirectoryIcon/>
     </IconButton>
    <div className={classes.toolBar2__tittle}>
-      <Typography>
-        NEW RELEASES
-      </Typography>
-      <Typography>
-        MEN
-      </Typography>
-      <Typography>
-        WOMEN
-      </Typography>
-      <Typography>
-        KIDS
-      </Typography>
+      <Link href='/products'  >
+        <a className={classes.link_custom}>
+          PRODUCTS
+        </a>
+      </Link>
+     <Link href='/users'>
+       <a className={classes.link_custom}>
+         USERS
+       </a>
+     </Link>
+     <Link href='/about'>
+       <a className={classes.link_custom}>
+         ABOUT
+       </a>
+     </Link>
     </div>
     <div className={classes.search}>
       <div className={classes.searchIcon}>

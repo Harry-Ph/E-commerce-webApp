@@ -28,7 +28,7 @@ import CustomModal from '../../components/Modal';
 import Router from "next/router";
 import LazyLoad from 'react-lazyload';
 
-const take = "9";
+const take = "15";
 
 // const API = "http://localhost:3000/api/graphql";
 // const fetcher = (query: any, skip: string, take: string) =>

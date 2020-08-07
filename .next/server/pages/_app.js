@@ -648,6 +648,14 @@ exports.normalizePathTrailingSlash = normalizePathTrailingSlash;
 
 /***/ }),
 
+/***/ "YFqc":
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__("cTJO")
+
+
+/***/ }),
+
 /***/ "YTqd":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -813,6 +821,244 @@ function searchParamsToUrlQuery(searchParams) {
 
 /***/ }),
 
+/***/ "cTJO":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _interopRequireWildcard = __webpack_require__("7KCV");
+
+exports.__esModule = true;
+exports.default = void 0;
+
+var _react = _interopRequireWildcard(__webpack_require__("cDcd"));
+
+var _utils = __webpack_require__("kYf9");
+
+var _router = __webpack_require__("nOHt");
+
+var _router2 = __webpack_require__("elyg");
+/**
+* Detects whether a given url is from the same origin as the current page (browser only).
+*/
+
+
+function isLocal(url) {
+  const locationOrigin = (0, _utils.getLocationOrigin)();
+  const resolved = new URL(url, locationOrigin);
+  return resolved.origin === locationOrigin;
+}
+
+let cachedObserver;
+const listeners = new Map();
+const IntersectionObserver = false ? undefined : null;
+const prefetched = {};
+
+function getObserver() {
+  // Return shared instance of IntersectionObserver if already created
+  if (cachedObserver) {
+    return cachedObserver;
+  } // Only create shared IntersectionObserver if supported in browser
+
+
+  if (!IntersectionObserver) {
+    return undefined;
+  }
+
+  return cachedObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!listeners.has(entry.target)) {
+        return;
+      }
+
+      const cb = listeners.get(entry.target);
+
+      if (entry.isIntersecting || entry.intersectionRatio > 0) {
+        cachedObserver.unobserve(entry.target);
+        listeners.delete(entry.target);
+        cb();
+      }
+    });
+  }, {
+    rootMargin: '200px'
+  });
+}
+
+const listenToIntersections = (el, cb) => {
+  const observer = getObserver();
+
+  if (!observer) {
+    return () => {};
+  }
+
+  observer.observe(el);
+  listeners.set(el, cb);
+  return () => {
+    try {
+      observer.unobserve(el);
+    } catch (err) {
+      console.error(err);
+    }
+
+    listeners.delete(el);
+  };
+};
+
+function prefetch(router, href, as, options) {
+  if (true) return; // Prefetch the JSON page if asked (only in the client)
+  // We need to handle a prefetch error here since we may be
+  // loading with priority which can reject but we don't
+  // want to force navigation since this is only a prefetch
+
+  router.prefetch(href, as, options).catch(err => {
+    if (false) {}
+  }); // Join on an invalid URI character
+
+  prefetched[href + '%' + as] = true;
+}
+
+function linkClicked(e, router, href, as, replace, shallow, scroll) {
+  const {
+    nodeName,
+    target
+  } = e.currentTarget;
+
+  if (nodeName === 'A' && (target && target !== '_self' || e.metaKey || e.ctrlKey || e.shiftKey || e.nativeEvent && e.nativeEvent.which === 2)) {
+    // ignore click for new tab / new window behavior
+    return;
+  }
+
+  if (!isLocal(href)) {
+    // ignore click if it's outside our scope (e.g. https://google.com)
+    return;
+  }
+
+  e.preventDefault(); //  avoid scroll for urls with anchor refs
+
+  if (scroll == null) {
+    scroll = as.indexOf('#') < 0;
+  } // replace state instead of push if prop is present
+
+
+  router[replace ? 'replace' : 'push'](href, as, {
+    shallow
+  }).then(success => {
+    if (!success) return;
+
+    if (scroll) {
+      window.scrollTo(0, 0);
+      document.body.focus();
+    }
+  });
+}
+
+function Link(props) {
+  if (false) {}
+
+  const p = props.prefetch !== false;
+
+  const [childElm, setChildElm] = _react.default.useState();
+
+  const router = (0, _router.useRouter)();
+
+  const {
+    href,
+    as
+  } = _react.default.useMemo(() => {
+    const resolvedHref = (0, _router2.resolveHref)(router.pathname, props.href);
+    return {
+      href: resolvedHref,
+      as: props.as ? (0, _router2.resolveHref)(router.pathname, props.as) : resolvedHref
+    };
+  }, [router.pathname, props.href, props.as]);
+
+  _react.default.useEffect(() => {
+    if (p && IntersectionObserver && childElm && childElm.tagName) {
+      // Join on an invalid URI character
+      const isPrefetched = prefetched[href + '%' + as];
+
+      if (!isPrefetched) {
+        return listenToIntersections(childElm, () => {
+          prefetch(router, href, as);
+        });
+      }
+    }
+  }, [p, childElm, href, as, router]);
+
+  let {
+    children,
+    replace,
+    shallow,
+    scroll
+  } = props; // Deprecated. Warning shown by propType check. If the children provided is a string (<Link>example</Link>) we wrap it in an <a> tag
+
+  if (typeof children === 'string') {
+    children = /*#__PURE__*/_react.default.createElement("a", null, children);
+  } // This will return the first child, if multiple are provided it will throw an error
+
+
+  const child = _react.Children.only(children);
+
+  const childProps = {
+    ref: el => {
+      if (el) setChildElm(el);
+
+      if (child && typeof child === 'object' && child.ref) {
+        if (typeof child.ref === 'function') child.ref(el);else if (typeof child.ref === 'object') {
+          child.ref.current = el;
+        }
+      }
+    },
+    onClick: e => {
+      if (child.props && typeof child.props.onClick === 'function') {
+        child.props.onClick(e);
+      }
+
+      if (!e.defaultPrevented) {
+        linkClicked(e, router, href, as, replace, shallow, scroll);
+      }
+    }
+  };
+
+  if (p) {
+    childProps.onMouseEnter = e => {
+      if (child.props && typeof child.props.onMouseEnter === 'function') {
+        child.props.onMouseEnter(e);
+      }
+
+      prefetch(router, href, as, {
+        priority: true
+      });
+    };
+  } // If child is an <a> tag and doesn't have a href attribute, or if the 'passHref' property is
+  // defined, we specify the current 'href', so that repetition is not needed by the user
+
+
+  if (props.passHref || child.type === 'a' && !('href' in child.props)) {
+    childProps.href = (0, _router2.addBasePath)(as);
+  } // Add the ending slash to the paths. So, we can serve the
+  // "<page>/index.html" directly.
+
+
+  if (true) {
+    const rewriteUrlForNextExport = __webpack_require__("ddid").rewriteUrlForNextExport;
+
+    if (childProps.href && typeof __NEXT_DATA__ !== 'undefined' && __NEXT_DATA__.nextExport) {
+      childProps.href = rewriteUrlForNextExport(childProps.href);
+    }
+  }
+
+  return _react.default.cloneElement(child, childProps);
+}
+
+if (false) {}
+
+var _default = Link;
+exports.default = _default;
+
+/***/ }),
+
 /***/ "cVmi":
 /***/ (function(module, exports) {
 
@@ -909,6 +1155,7 @@ var StoreMallDirectory_ = __webpack_require__("Q2dR");
 var StoreMallDirectory_default = /*#__PURE__*/__webpack_require__.n(StoreMallDirectory_);
 
 // CONCATENATED MODULE: ./components/NavBarItem/style.tsx
+ // @ts-ignore
 
 const style_useStyles = Object(core_["makeStyles"])(theme => Object(core_["createStyles"])({
   toolBar2__storeIcon: {
@@ -917,6 +1164,11 @@ const style_useStyles = Object(core_["makeStyles"])(theme => Object(core_["creat
   toolBar2: {
     display: 'flex',
     justifyContent: 'space-between'
+  },
+  link_custom: {
+    textDecoration: 'none',
+    color: 'white',
+    fontWeight: 'bolder'
   },
   toolBar2__tittle: {
     display: 'grid',
@@ -958,8 +1210,13 @@ const style_useStyles = Object(core_["makeStyles"])(theme => Object(core_["creat
       width: '20ch'
     }
   }
-}));
+})); // @ts-ignore
+
 /* harmony default export */ var NavBarItem_style = (style_useStyles);
+// EXTERNAL MODULE: ./node_modules/next/link.js
+var next_link = __webpack_require__("YFqc");
+var link_default = /*#__PURE__*/__webpack_require__.n(next_link);
+
 // CONCATENATED MODULE: ./components/NavBarItem/NavBarItem.tsx
 var __jsx = external_react_default.a.createElement;
 
@@ -980,7 +1237,19 @@ const NavBarItem = () => {
     color: "inherit"
   }, __jsx(StoreMallDirectory_default.a, null)), __jsx("div", {
     className: classes.toolBar2__tittle
-  }, __jsx(Typography_default.a, null, "NEW RELEASES"), __jsx(Typography_default.a, null, "MEN"), __jsx(Typography_default.a, null, "WOMEN"), __jsx(Typography_default.a, null, "KIDS")), __jsx("div", {
+  }, __jsx(link_default.a, {
+    href: "/products"
+  }, __jsx("a", {
+    className: classes.link_custom
+  }, "PRODUCTS")), __jsx(link_default.a, {
+    href: "/users"
+  }, __jsx("a", {
+    className: classes.link_custom
+  }, "USERS")), __jsx(link_default.a, {
+    href: "/about"
+  }, __jsx("a", {
+    className: classes.link_custom
+  }, "ABOUT"))), __jsx("div", {
     className: classes.search
   }, __jsx("div", {
     className: classes.searchIcon
@@ -1340,6 +1609,13 @@ function mitt() {
 
   };
 }
+
+/***/ }),
+
+/***/ "ddid":
+/***/ (function(module, exports) {
+
+module.exports = require("next/dist/next-server/lib/router/rewrite-url-for-export.js");
 
 /***/ }),
 

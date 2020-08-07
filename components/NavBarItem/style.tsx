@@ -1,5 +1,6 @@
 import { makeStyles, createStyles, Theme, fade } from '@material-ui/core'
 
+// @ts-ignore
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     toolBar2__storeIcon: {
@@ -9,6 +10,13 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       justifyContent: 'space-between',
     },
+
+    link_custom: {
+      textDecoration: 'none',
+      color: 'white',
+      fontWeight: 'bolder'
+    },
+
     toolBar2__tittle: {
       display: 'grid',
       gridTemplateColumns: '200px 100px 120px 100px ',
@@ -53,4 +61,5 @@ const useStyles = makeStyles((theme: Theme) =>
 })
 )
 
+// @ts-ignore
 export default useStyles

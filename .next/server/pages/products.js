@@ -2347,7 +2347,7 @@ const prisma2 = new client_["PrismaClient"]();
 
 
 
-const take = "9"; // const API = "http://localhost:3000/api/graphql";
+const take = "15"; // const API = "http://localhost:3000/api/graphql";
 // const fetcher = (query: any, skip: string, take: string) =>
 //   request(API, query, { skip, take });
 
@@ -2619,6 +2619,12 @@ const useStyles = Object(_material_ui_core__WEBPACK_IMPORTED_MODULE_0__["makeSty
     display: 'flex',
     maxHeight: '768px',
     flexWrap: 'wrap'
+  },
+  content__about: {
+    display: 'flex'
+  },
+  content__item_about: {
+    margin: '12px'
   },
   content__item: {
     width: '100%'
