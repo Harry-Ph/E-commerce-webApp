@@ -31,7 +31,9 @@ export interface IModel {
   redirectRouting:  (currentPage: string)=> void
   open: boolean
   isEdit: boolean
-  products: Product[]
+  products: {
+    allProducts: Product[]
+  }
 }
 
 const initialValues = {
@@ -54,7 +56,7 @@ export default function TransitionsModal({products , redirectRouting, currentPag
       const {id} = product;
       console.log('products', products)
 
-      await mutate(API, [...products?.filter(p => p?.id != id)], false);
+      await mutate(API, products?.allProducts.filter(p => p?.id != id), false);
 
       await request(API, REMOVE_PRODUCT, {id})
 

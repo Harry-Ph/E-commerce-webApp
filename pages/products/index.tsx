@@ -119,7 +119,7 @@ export default function Products({ skip, products, numberPages }: IProducts) {
             currentPage= {(router.query.page || 1) as string}
             isEdit={false}
           // @ts-ignore
-            products ={productArray || products || []}
+            products ={ products || []}
         />
 
       )}
@@ -132,7 +132,7 @@ export default function Products({ skip, products, numberPages }: IProducts) {
           open={openEdit}
           isEdit={true}
           // @ts-ignore
-          products ={productArray || products || []}
+          products ={ products || []}
         />)
         :null
       }
