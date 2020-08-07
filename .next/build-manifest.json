@@ -5,8 +5,8 @@
   "devFiles": [],
   "ampDevFiles": [],
   "lowPriorityFiles": [
-    "static/ctiObZyRiF3RFO56psi_m/_buildManifest.js",
-    "static/ctiObZyRiF3RFO56psi_m/_ssgManifest.js"
+    "static/iR1y8bhHUBwUVsliNAEFG/_buildManifest.js",
+    "static/iR1y8bhHUBwUVsliNAEFG/_ssgManifest.js"
   ],
   "pages": {
     "/": [
@@ -28,10 +28,10 @@
       "static/chunks/4533bd0aab097300c15b17499fabf98510ed05fd.7e68229357a42a928720.js",
       "static/chunks/d0945d14319613884b2f0177f459ce5536dd3f00.6bd15302da875cc81eba.js",
       "static/chunks/7a0b22a9df2e2f498b66c6cd820dae7619a7d277.44f31cbaef4b7446bf1a.js",
-      "static/chunks/80c6afc4e2d452501844700f5aca9c9cd73c299c.2702ed6f3c0cdf81f0a5.js",
+      "static/chunks/80c6afc4e2d452501844700f5aca9c9cd73c299c.a8665d3bcec773e76e86.js",
       "static/chunks/5890f32076eac8d4943eb04a8509741ac683ed78.9c8b00ee8e3e821da06f.js",
       "static/css/5a8200a80636d0ede9d5.css",
-      "static/chunks/pages/_app-8a06f5a416eed7320337.js"
+      "static/chunks/pages/_app-359731e8adb44562c026.js"
     ],
     "/_error": [
       "static/chunks/main-2446cf1195b2813e3b0b.js",
@@ -60,8 +60,8 @@
       "static/chunks/9c265261bb42cfd7ba3396849ecc40fcb94dd7fa.7109b3653ce24ea7e869.js",
       "static/chunks/7a0b22a9df2e2f498b66c6cd820dae7619a7d277.44f31cbaef4b7446bf1a.js",
       "static/chunks/5f7de73795d6bc7b0d0ec3da2acdf76591d30ab9.6379a03bfdfa08bf4840.js",
-      "static/chunks/139e285f757613d52639d8959d3650b3934a95e1.f88bfa95a890d9d7b670.js",
-      "static/chunks/80c6afc4e2d452501844700f5aca9c9cd73c299c.2702ed6f3c0cdf81f0a5.js",
+      "static/chunks/139e285f757613d52639d8959d3650b3934a95e1.a9f995a42e4d5dab0308.js",
+      "static/chunks/80c6afc4e2d452501844700f5aca9c9cd73c299c.a8665d3bcec773e76e86.js",
       "static/chunks/d546531a8984eff14988a13de41b96583bf19502.9add4c630e68372d2121.js",
       "static/chunks/ff4f226f2cbf56a4daa356a2c650368b6f9a62a7.93cd2764d20e27b67a6b.js",
       "static/css/fabfd622aac7335ebc93.css",
@@ -78,8 +78,8 @@
       "static/chunks/9c265261bb42cfd7ba3396849ecc40fcb94dd7fa.7109b3653ce24ea7e869.js",
       "static/chunks/7a0b22a9df2e2f498b66c6cd820dae7619a7d277.44f31cbaef4b7446bf1a.js",
       "static/chunks/5f7de73795d6bc7b0d0ec3da2acdf76591d30ab9.6379a03bfdfa08bf4840.js",
-      "static/chunks/139e285f757613d52639d8959d3650b3934a95e1.f88bfa95a890d9d7b670.js",
-      "static/chunks/80c6afc4e2d452501844700f5aca9c9cd73c299c.2702ed6f3c0cdf81f0a5.js",
+      "static/chunks/139e285f757613d52639d8959d3650b3934a95e1.a9f995a42e4d5dab0308.js",
+      "static/chunks/80c6afc4e2d452501844700f5aca9c9cd73c299c.a8665d3bcec773e76e86.js",
       "static/chunks/d546531a8984eff14988a13de41b96583bf19502.9add4c630e68372d2121.js",
       "static/chunks/ff4f226f2cbf56a4daa356a2c650368b6f9a62a7.93cd2764d20e27b67a6b.js",
       "static/css/fabfd622aac7335ebc93.css",
@@ -96,8 +96,8 @@
       "static/chunks/9c265261bb42cfd7ba3396849ecc40fcb94dd7fa.7109b3653ce24ea7e869.js",
       "static/chunks/7a0b22a9df2e2f498b66c6cd820dae7619a7d277.44f31cbaef4b7446bf1a.js",
       "static/chunks/5f7de73795d6bc7b0d0ec3da2acdf76591d30ab9.6379a03bfdfa08bf4840.js",
-      "static/chunks/139e285f757613d52639d8959d3650b3934a95e1.f88bfa95a890d9d7b670.js",
-      "static/chunks/80c6afc4e2d452501844700f5aca9c9cd73c299c.2702ed6f3c0cdf81f0a5.js",
+      "static/chunks/139e285f757613d52639d8959d3650b3934a95e1.a9f995a42e4d5dab0308.js",
+      "static/chunks/80c6afc4e2d452501844700f5aca9c9cd73c299c.a8665d3bcec773e76e86.js",
       "static/chunks/pages/products/create-755ba4b02116ad8640fb.js"
     ],
     "/products/details/[id]": [
@@ -169,7 +169,7 @@
       "static/chunks/9c265261bb42cfd7ba3396849ecc40fcb94dd7fa.7109b3653ce24ea7e869.js",
       "static/chunks/7a0b22a9df2e2f498b66c6cd820dae7619a7d277.44f31cbaef4b7446bf1a.js",
       "static/chunks/5f7de73795d6bc7b0d0ec3da2acdf76591d30ab9.6379a03bfdfa08bf4840.js",
-      "static/chunks/139e285f757613d52639d8959d3650b3934a95e1.f88bfa95a890d9d7b670.js",
+      "static/chunks/139e285f757613d52639d8959d3650b3934a95e1.a9f995a42e4d5dab0308.js",
       "static/chunks/pages/users/register-21dc1382a21877cf3d0d.js"
     ]
   },
