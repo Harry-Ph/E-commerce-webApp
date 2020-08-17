@@ -53,7 +53,7 @@ const StaticPropsDetail = ({ item, errors }: Props) => {
               </Grid>
               <Grid item xs={6}>
           <Typography variant="h5" component="h2" gutterBottom className={classes.text}>
-              Name : Bui Nguyen Khoa
+              Name : {item?.username}
           </Typography>
           <Typography variant="h5" component="h2" gutterBottom className={classes.text}>
               Role : Sat thu
