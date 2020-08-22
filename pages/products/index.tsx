@@ -279,6 +279,10 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
       numberPages,
       skip,
     },
+    // we will attempt to re-generate the page:
+    // - when a request comes in
+    // - at most once every 3 seconds
+    revalidate: 3
   };
 };
 
